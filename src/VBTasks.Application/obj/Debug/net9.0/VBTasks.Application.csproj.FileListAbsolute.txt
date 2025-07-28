@@ -1,0 +1,15 @@
+/home/ale/vb-tasks/src/VBTasks.Application/obj/Debug/net9.0/VBTasks.Application.csproj.AssemblyReference.cache
+/home/ale/vb-tasks/src/VBTasks.Application/obj/Debug/net9.0/VBTasks.Application.GeneratedMSBuildEditorConfig.editorconfig
+/home/ale/vb-tasks/src/VBTasks.Application/obj/Debug/net9.0/VBTasks.Application.AssemblyInfoInputs.cache
+/home/ale/vb-tasks/src/VBTasks.Application/obj/Debug/net9.0/VBTasks.Application.AssemblyInfo.cs
+/home/ale/vb-tasks/src/VBTasks.Application/obj/Debug/net9.0/VBTasks.Application.csproj.CoreCompileInputs.cache
+/home/ale/vb-tasks/src/VBTasks.Application/bin/Debug/net9.0/VBTasks.Application.deps.json
+/home/ale/vb-tasks/src/VBTasks.Application/bin/Debug/net9.0/VBTasks.Application.dll
+/home/ale/vb-tasks/src/VBTasks.Application/bin/Debug/net9.0/VBTasks.Application.pdb
+/home/ale/vb-tasks/src/VBTasks.Application/bin/Debug/net9.0/VBTasks.Domain.dll
+/home/ale/vb-tasks/src/VBTasks.Application/bin/Debug/net9.0/VBTasks.Domain.pdb
+/home/ale/vb-tasks/src/VBTasks.Application/obj/Debug/net9.0/VBTasks..B42356C7.Up2Date
+/home/ale/vb-tasks/src/VBTasks.Application/obj/Debug/net9.0/VBTasks.Application.dll
+/home/ale/vb-tasks/src/VBTasks.Application/obj/Debug/net9.0/refint/VBTasks.Application.dll
+/home/ale/vb-tasks/src/VBTasks.Application/obj/Debug/net9.0/VBTasks.Application.pdb
+/home/ale/vb-tasks/src/VBTasks.Application/obj/Debug/net9.0/ref/VBTasks.Application.dll

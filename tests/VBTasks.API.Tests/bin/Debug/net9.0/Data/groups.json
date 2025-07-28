@@ -1,0 +1,16 @@
+{
+  "Items": [
+    {
+      "Id": "group1",
+      "Name": "Backend Team",
+      "Description": "Backend development team",
+      "Members": ["user2", "user3"]
+    },
+    {
+      "Id": "group2",
+      "Name": "Frontend Team",
+      "Description": "Frontend development team",
+      "Members": ["user3"]
+    }
+  ]
+}

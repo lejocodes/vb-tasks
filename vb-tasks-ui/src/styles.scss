@@ -1,0 +1,59 @@
+/* Global styles for VB-Tasks */
+
+/* Reset and base styles */
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+body {
+  background-color: #f8f9fa;
+  color: #495057;
+}
+
+/* Custom utility classes */
+.full-height {
+  height: 100vh;
+}
+
+.text-center {
+  text-align: center;
+}
+
+/* Override PrimeNG default focus styles for better accessibility */
+.p-component:focus {
+  box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.5);
+}
+
+/* Loading overlay */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+/* Status colors */
+.status-new { color: #6c757d; }
+.status-inprogress { color: #007bff; }
+.status-review { color: #fd7e14; }
+.status-blocked { color: #dc3545; }
+.status-completed { color: #28a745; }
+
+/* Priority colors */
+.priority-low { color: #6c757d; }
+.priority-medium { color: #007bff; }
+.priority-high { color: #fd7e14; }
+.priority-critical { color: #dc3545; }
