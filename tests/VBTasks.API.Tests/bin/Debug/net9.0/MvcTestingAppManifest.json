@@ -1,6 +1,0 @@
-{
-  "VBTasks.API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "\/home\/ale\/vb-tasks\/src\/VBTasks.API",
-  "VBTasks.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "\/home\/ale\/vb-tasks\/src\/VBTasks.Application",
-  "VBTasks.Domain, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "\/home\/ale\/vb-tasks\/src\/VBTasks.Domain",
-  "VBTasks.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "\/home\/ale\/vb-tasks\/src\/VBTasks.Infrastructure"
-}
