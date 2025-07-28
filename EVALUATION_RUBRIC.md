@@ -1,7 +1,7 @@
-# VB-Tasks Interview Evaluation Rubric
+# VB-Tasks Interview Evaluation Rubric (Mid-Senior Level)
 
 ## Overview
-This rubric provides a standardized framework for evaluating technical interview candidates. Each competency area is scored on a 1-5 scale.
+This rubric is designed for evaluating mid to senior-level developers (2+ years experience). Each competency area is scored on a 1-5 scale, with higher expectations than junior roles.
 
 ---
 
@@ -137,12 +137,12 @@ This rubric provides a standardized framework for evaluating technical interview
 | Communication | ___ | 10% | ___ |
 | **Total Weighted Score** | | | **___/5.0** |
 
-### Recommendation Thresholds
-- **4.0-5.0**: Strong Hire - Exceeds requirements
-- **3.5-3.9**: Hire - Meets requirements well
-- **3.0-3.4**: Possible Hire - Meets basic requirements
-- **2.5-2.9**: No Hire - Below requirements
-- **Below 2.5**: Strong No Hire - Significantly below requirements
+### Recommendation Thresholds for Mid-Senior Roles
+- **4.3-5.0**: Exceptional - Hire at higher level / fast track
+- **3.8-4.2**: Strong Hire - Exceeds expectations
+- **3.5-3.7**: Hire - Meets role requirements
+- **3.2-3.4**: Borderline - Consider for lower level
+- **Below 3.2**: No Hire - Does not meet mid-level standards
 
 ### Additional Factors
 
@@ -221,51 +221,54 @@ _________________________________
 
 ## Calibration Guidelines
 
-### For Junior Positions (0-2 years)
-- Focus more on potential and learning ability
-- Weight communication and problem-solving higher
-- Expect 3.0-3.5 range for good candidates
-- Look for strong fundamentals over deep expertise
-
 ### For Mid-Level Positions (2-5 years)
-- Expect solid technical skills across the stack
+- Expect solid technical skills in primary area
 - Should score 3.5-4.0 for strong candidates
-- Look for some specialization areas
-- Assess mentoring potential
+- Some cross-functional knowledge required
+- Look for problem-solving ability
+- Beginning to show architectural thinking
 
 ### For Senior Positions (5+ years)
-- Expect high scores in architecture and design
-- Should score 4.0+ for strong candidates
-- Must demonstrate leadership qualities
-- Deep expertise in multiple areas required
+- Expect high scores in architecture and design (4+)
+- Should score 4.0-4.5 for strong candidates
+- Must demonstrate technical leadership
+- Deep expertise in multiple areas
+- Strong system design skills required
+
+### For Staff/Principal Positions (8+ years)
+- Expect exceptional scores (4.5+)
+- Architectural mastery required
+- Cross-functional expertise
+- Strong mentorship evidence
+- Strategic thinking ability
 
 ---
 
 ## Sample Scoring Scenarios
 
 ### Scenario 1: Strong Mid-Level Candidate
-- Architecture: 4 (Good understanding, some great insights)
-- Frontend: 4 (Strong Angular skills)
-- Backend: 3 (Competent but not their strength)
-- Problem Solving: 4 (Logical, considers options)
-- Code Quality: 4 (Clean code advocate)
-- Communication: 5 (Excellent communicator)
-- **Total**: 3.85 - Hire
+- Architecture: 4 (Good understanding, asks right questions)
+- Frontend: 4 (Current Angular knowledge, good practices)
+- Backend: 3 (Competent, understands patterns)
+- Problem Solving: 4 (Methodical, considers trade-offs)
+- Code Quality: 4 (Writes maintainable code)
+- Communication: 4 (Clear technical communication)
+- **Total**: 3.85 - Strong Hire
 
-### Scenario 2: Weak Senior Candidate
-- Architecture: 3 (Basic understanding for senior level)
-- Frontend: 3 (Outdated Angular knowledge)
-- Backend: 4 (Strong .NET skills)
-- Problem Solving: 3 (Struggles with complex scenarios)
-- Code Quality: 3 (Adequate but not exemplary)
-- Communication: 2 (Poor at explaining decisions)
-- **Total**: 3.15 - No Hire for Senior
+### Scenario 2: Borderline Senior Candidate
+- Architecture: 3.5 (Decent but not senior-level depth)
+- Frontend: 4 (Strong technical skills)
+- Backend: 3.5 (Good knowledge, some gaps)
+- Problem Solving: 3.5 (Good but not exceptional)
+- Code Quality: 4 (Solid practices)
+- Communication: 3 (Sometimes unclear)
+- **Total**: 3.6 - Hire as Mid-Level
 
-### Scenario 3: Promising Junior
-- Architecture: 2 (Learning but shows promise)
-- Frontend: 3 (Good React, learning Angular)
-- Backend: 3 (Basic understanding)
-- Problem Solving: 4 (Great analytical skills)
-- Code Quality: 3 (Cares about quality)
-- Communication: 4 (Clear and eager)
-- **Total**: 3.05 - Possible Hire with mentorship
+### Scenario 3: Exceptional Senior Candidate
+- Architecture: 5 (Deep insights, great suggestions)
+- Frontend: 4.5 (Expert-level Angular)
+- Backend: 4 (Strong across the stack)
+- Problem Solving: 5 (Multiple solutions, clear trade-offs)
+- Code Quality: 4.5 (Excellence in practice)
+- Communication: 4.5 (Teaches while explaining)
+- **Total**: 4.55 - Strong Hire, Consider for Staff

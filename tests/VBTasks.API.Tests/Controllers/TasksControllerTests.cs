@@ -7,24 +7,17 @@ using Xunit;
 
 namespace VBTasks.API.Tests.Controllers;
 
-public class TasksControllerTests : IClassFixture<TestWebApplicationFactory>
+public class TasksControllerTests : IntegrationTestBase
 {
-    private readonly TestWebApplicationFactory _factory;
-    private readonly HttpClient _client;
-    private readonly JsonSerializerOptions _jsonOptions;
-
-    public TasksControllerTests(TestWebApplicationFactory factory)
+    public TasksControllerTests(WebApplicationFactory<Program> factory) : base(factory)
     {
-        _factory = factory;
-        _client = _factory.CreateClient();
-        _jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
     }
 
     [Fact]
     public async Task GetStatistics_WithoutAuth_ReturnsUnauthorized()
     {
         // Act
-        var response = await _client.GetAsync("/api/tasks/statistics");
+        var response = await Client.GetAsync("/api/tasks/statistics");
 
         // Assert
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
@@ -37,12 +30,12 @@ public class TasksControllerTests : IClassFixture<TestWebApplicationFactory>
         await AuthenticateAsync();
 
         // Act
-        var response = await _client.GetAsync("/api/tasks/statistics");
+        var response = await Client.GetAsync("/api/tasks/statistics");
 
         // Assert
         response.EnsureSuccessStatusCode();
         var content = await response.Content.ReadAsStringAsync();
-        var statistics = JsonSerializer.Deserialize<TaskStatisticsDto>(content, _jsonOptions);
+        var statistics = JsonSerializer.Deserialize<TaskStatisticsDto>(content, JsonOptions);
         
         Assert.NotNull(statistics);
         Assert.True(statistics.TotalTasks >= 0);
@@ -63,12 +56,12 @@ public class TasksControllerTests : IClassFixture<TestWebApplicationFactory>
         };
 
         // Act
-        var response = await _client.PostAsJsonAsync("/api/tasks", newTask);
+        var response = await Client.PostAsJsonAsync("/api/tasks", newTask);
 
         // Assert
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
         var content = await response.Content.ReadAsStringAsync();
-        var createdTask = JsonSerializer.Deserialize<TaskDto>(content, _jsonOptions);
+        var createdTask = JsonSerializer.Deserialize<TaskDto>(content, JsonOptions);
         
         Assert.NotNull(createdTask);
         Assert.Equal(newTask.Title, createdTask.Title);
@@ -87,7 +80,7 @@ public class TasksControllerTests : IClassFixture<TestWebApplicationFactory>
         };
 
         // Act
-        var response = await _client.PostAsJsonAsync("/api/tasks", invalidTask);
+        var response = await Client.PostAsJsonAsync("/api/tasks", invalidTask);
 
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -100,31 +93,14 @@ public class TasksControllerTests : IClassFixture<TestWebApplicationFactory>
         await AuthenticateAsync();
 
         // Act
-        var response = await _client.GetAsync("/api/tasks/my-tasks");
+        var response = await Client.GetAsync("/api/tasks/my-tasks");
 
         // Assert
         response.EnsureSuccessStatusCode();
         var content = await response.Content.ReadAsStringAsync();
-        var tasks = JsonSerializer.Deserialize<List<TaskDto>>(content, _jsonOptions);
+        var tasks = JsonSerializer.Deserialize<List<TaskDto>>(content, JsonOptions);
         
         Assert.NotNull(tasks);
     }
 
-    private async Task AuthenticateAsync()
-    {
-        var loginDto = new LoginDto
-        {
-            Email = "john.doe@example.com",
-            Password = "password123"
-        };
-
-        var response = await _client.PostAsJsonAsync("/api/auth/login", loginDto);
-        if (response.IsSuccessStatusCode)
-        {
-            var content = await response.Content.ReadAsStringAsync();
-            var authResponse = JsonSerializer.Deserialize<AuthResponseDto>(content, _jsonOptions);
-            _client.DefaultRequestHeaders.Authorization = 
-                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", authResponse?.Token);
-        }
-    }
 }

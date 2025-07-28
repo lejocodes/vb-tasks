@@ -7,24 +7,17 @@ using Xunit;
 
 namespace VBTasks.API.Tests.Controllers;
 
-public class GroupsControllerTests : IClassFixture<TestWebApplicationFactory>
+public class GroupsControllerTests : IntegrationTestBase
 {
-    private readonly TestWebApplicationFactory _factory;
-    private readonly HttpClient _client;
-    private readonly JsonSerializerOptions _jsonOptions;
-
-    public GroupsControllerTests(TestWebApplicationFactory factory)
+    public GroupsControllerTests(WebApplicationFactory<Program> factory) : base(factory)
     {
-        _factory = factory;
-        _client = _factory.CreateClient();
-        _jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
     }
 
     [Fact]
     public async Task GetGroupTasks_WithoutAuth_ReturnsUnauthorized()
     {
         // Act
-        var response = await _client.GetAsync("/api/groups/group1/tasks");
+        var response = await Client.GetAsync("/api/groups/group1/tasks");
 
         // Assert
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
@@ -38,12 +31,12 @@ public class GroupsControllerTests : IClassFixture<TestWebApplicationFactory>
         var groupId = "development"; // Assuming this group exists in sample data
 
         // Act
-        var response = await _client.GetAsync($"/api/groups/{groupId}/tasks");
+        var response = await Client.GetAsync($"/api/groups/{groupId}/tasks");
 
         // Assert
         response.EnsureSuccessStatusCode();
         var content = await response.Content.ReadAsStringAsync();
-        var tasks = JsonSerializer.Deserialize<List<TaskDto>>(content, _jsonOptions);
+        var tasks = JsonSerializer.Deserialize<List<TaskDto>>(content, JsonOptions);
         
         Assert.NotNull(tasks);
     }
@@ -56,7 +49,7 @@ public class GroupsControllerTests : IClassFixture<TestWebApplicationFactory>
         var nonExistingGroupId = "non-existing-group-999";
 
         // Act
-        var response = await _client.GetAsync($"/api/groups/{nonExistingGroupId}/tasks");
+        var response = await Client.GetAsync($"/api/groups/{nonExistingGroupId}/tasks");
 
         // Assert
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
@@ -69,12 +62,12 @@ public class GroupsControllerTests : IClassFixture<TestWebApplicationFactory>
         await AuthenticateAsync();
 
         // Act
-        var response = await _client.GetAsync("/api/groups");
+        var response = await Client.GetAsync("/api/groups");
 
         // Assert
         response.EnsureSuccessStatusCode();
         var content = await response.Content.ReadAsStringAsync();
-        var groups = JsonSerializer.Deserialize<List<GroupDto>>(content, _jsonOptions);
+        var groups = JsonSerializer.Deserialize<List<GroupDto>>(content, JsonOptions);
         
         Assert.NotNull(groups);
         Assert.True(groups.Count > 0);
@@ -87,31 +80,14 @@ public class GroupsControllerTests : IClassFixture<TestWebApplicationFactory>
         await AuthenticateAsync();
 
         // Act
-        var response = await _client.GetAsync("/api/groups/my-groups");
+        var response = await Client.GetAsync("/api/groups/my-groups");
 
         // Assert
         response.EnsureSuccessStatusCode();
         var content = await response.Content.ReadAsStringAsync();
-        var groups = JsonSerializer.Deserialize<List<GroupDto>>(content, _jsonOptions);
+        var groups = JsonSerializer.Deserialize<List<GroupDto>>(content, JsonOptions);
         
         Assert.NotNull(groups);
     }
 
-    private async Task AuthenticateAsync()
-    {
-        var loginDto = new LoginDto
-        {
-            Email = "john.doe@example.com",
-            Password = "password123"
-        };
-
-        var response = await _client.PostAsJsonAsync("/api/auth/login", loginDto);
-        if (response.IsSuccessStatusCode)
-        {
-            var content = await response.Content.ReadAsStringAsync();
-            var authResponse = JsonSerializer.Deserialize<AuthResponseDto>(content, _jsonOptions);
-            _client.DefaultRequestHeaders.Authorization = 
-                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", authResponse?.Token);
-        }
-    }
 }
