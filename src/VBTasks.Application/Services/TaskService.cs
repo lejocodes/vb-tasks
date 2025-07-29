@@ -1,11 +1,11 @@
 using VBTasks.Application.DTOs;
 using VBTasks.Application.Interfaces;
-using VBTasks.Domain.Entities;
-using VBTasks.Domain.Interfaces;
+using VBTasks.Business.Entities;
+using VBTasks.Business.Interfaces;
 
 namespace VBTasks.Application.Services;
 
-public class TaskService : ITaskService
+public class TaskService : Application.Interfaces.ITaskService
 {
     private readonly ITaskRepository _taskRepository;
 

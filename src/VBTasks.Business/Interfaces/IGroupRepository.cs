@@ -4,4 +4,5 @@ namespace VBTasks.Business.Interfaces;
 
 public interface IGroupRepository : IRepository<Group>
 {
+    Task<IEnumerable<Group>> GetGroupsByUserAsync(string userId);
 }

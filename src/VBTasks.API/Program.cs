@@ -1,6 +1,5 @@
 using VBTasks.API.Middleware;
 using VBTasks.Business.Interfaces;
-using VBTasks.Domain.Interfaces;
 using VBTasks.Infrastructure.Repositories;
 using VBTasks.Infrastructure.Services;
 
@@ -42,9 +41,9 @@ builder.Services.AddCors(options =>
 builder.Services.AddSingleton<JsonFileService>();
 
 // Register repositories
-builder.Services.AddScoped<VBTasks.Domain.Interfaces.ITaskRepository, TaskRepository>();
-builder.Services.AddScoped<VBTasks.Domain.Interfaces.IUserRepository, UserRepository>();
-builder.Services.AddScoped<VBTasks.Domain.Interfaces.IGroupRepository, GroupRepository>();
+builder.Services.AddScoped<ITaskRepository, TaskRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IGroupRepository, GroupRepository>();
 
 // Register application services
 builder.Services.AddScoped<VBTasks.Application.Interfaces.ITaskService, VBTasks.Application.Services.TaskService>();

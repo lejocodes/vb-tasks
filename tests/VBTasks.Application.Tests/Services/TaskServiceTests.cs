@@ -1,8 +1,8 @@
 using Moq;
 using VBTasks.Application.DTOs;
 using VBTasks.Application.Services;
-using VBTasks.Domain.Entities;
-using VBTasks.Domain.Interfaces;
+using VBTasks.Business.Entities;
+using VBTasks.Business.Interfaces;
 using Xunit;
 
 namespace VBTasks.Application.Tests.Services;

@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <ProjectReference Include="..\VBTasks.Business\VBTasks.Business.csproj" />
     <ProjectReference Include="..\VBTasks.Domain\VBTasks.Domain.csproj" />
   </ItemGroup>
 
