@@ -52,7 +52,7 @@ public class TasksControllerTests : IntegrationTestBase
         {
             Title = "Integration Test Task",
             Description = "Created by integration test",
-            Priority = Domain.Entities.Priority.High
+            Priority = "High"
         };
 
         // Act
