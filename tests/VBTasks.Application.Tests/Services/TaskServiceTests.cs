@@ -28,8 +28,8 @@ public class TaskServiceTests
         // Arrange
         var tasks = new List<TaskItem>
         {
-            new TaskItem { Id = "1", Title = "Task 1", Status = Domain.Entities.TaskStatus.New, Priority = Priority.High },
-            new TaskItem { Id = "2", Title = "Task 2", Status = Domain.Entities.TaskStatus.InProgress, Priority = Priority.Medium }
+            new TaskItem { Id = "1", Title = "Task 1", Status = "New", Priority = "High" },
+            new TaskItem { Id = "2", Title = "Task 2", Status = "InProgress", Priority = "Medium" }
         };
         var user = new User { Id = "user1", Name = "Test User", Email = "test@example.com" };
         
@@ -53,9 +53,9 @@ public class TaskServiceTests
         // Arrange
         var tasks = new List<TaskItem>
         {
-            new TaskItem { Id = "1", Title = "Task 1", Status = Domain.Entities.TaskStatus.New },
-            new TaskItem { Id = "2", Title = "Task 2", Status = Domain.Entities.TaskStatus.InProgress },
-            new TaskItem { Id = "3", Title = "Task 3", Status = Domain.Entities.TaskStatus.New }
+            new TaskItem { Id = "1", Title = "Task 1", Status = "New" },
+            new TaskItem { Id = "2", Title = "Task 2", Status = "InProgress" },
+            new TaskItem { Id = "3", Title = "Task 3", Status = "New" }
         };
         var user = new User { Id = "user1", Name = "Test User", Email = "test@example.com" };
         
@@ -64,7 +64,7 @@ public class TaskServiceTests
 
         var filter = new TaskFilterDto 
         { 
-            Status = Domain.Entities.TaskStatus.New,
+            Status = "New",
             PageNumber = 1, 
             PageSize = 10 
         };
@@ -74,7 +74,7 @@ public class TaskServiceTests
 
         // Assert
         Assert.Equal(2, result.TotalCount);
-        Assert.All(result.Items, item => Assert.Equal(Domain.Entities.TaskStatus.New, item.Status));
+        Assert.All(result.Items, item => Assert.Equal("New", item.Status));
     }
 
     [Fact]
@@ -86,7 +86,7 @@ public class TaskServiceTests
         {
             Title = "New Task",
             Description = "Task Description",
-            Priority = Priority.High,
+            Priority = "High",
             Tags = new List<string> { "tag1", "tag2" }
         };
         var user = new User { Id = userId, Name = "Test User", Email = "test@example.com" };
@@ -115,14 +115,14 @@ public class TaskServiceTests
         {
             Id = taskId,
             Title = "Old Title",
-            Status = Domain.Entities.TaskStatus.New
+            Status = "New"
         };
         var updateDto = new UpdateTaskDto
         {
             Title = "Updated Title",
             Description = "Updated Description",
-            Status = Domain.Entities.TaskStatus.InProgress,
-            Priority = Priority.High
+            Status = "InProgress",
+            Priority = "High"
         };
         var user = new User { Id = "user1", Name = "Test User", Email = "test@example.com" };
 
@@ -202,13 +202,13 @@ public class TaskServiceTests
         // Arrange
         var tasks = new List<TaskItem>
         {
-            new TaskItem { Status = Domain.Entities.TaskStatus.New, Priority = Priority.High },
-            new TaskItem { Status = Domain.Entities.TaskStatus.New, Priority = Priority.Medium },
-            new TaskItem { Status = Domain.Entities.TaskStatus.InProgress, Priority = Priority.High },
-            new TaskItem { Status = Domain.Entities.TaskStatus.Completed, Priority = Priority.Low },
+            new TaskItem { Status = "New", Priority = "High" },
+            new TaskItem { Status = "New", Priority = "Medium" },
+            new TaskItem { Status = "InProgress", Priority = "High" },
+            new TaskItem { Status = "Completed", Priority = "Low" },
             new TaskItem { 
-                Status = Domain.Entities.TaskStatus.InProgress, 
-                Priority = Priority.Critical,
+                Status = "InProgress", 
+                Priority = "Critical",
                 DueDate = DateTime.UtcNow.AddDays(-1) // Overdue
             }
         };
@@ -241,7 +241,7 @@ public class TaskServiceTests
         };
         var assignmentDto = new AssignmentDto
         {
-            AssigneeType = AssigneeType.User,
+            AssigneeType = "User",
             AssigneeId = "assignee1"
         };
 
