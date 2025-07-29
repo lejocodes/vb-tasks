@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\VBTasks.Business\VBTasks.Business.csproj" />
+    <ProjectReference Include="..\VBTasks.Domain\VBTasks.Domain.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

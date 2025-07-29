@@ -1,5 +1,5 @@
-using VBTasks.Business.Entities;
-using VBTasks.Business.Interfaces;
+using VBTasks.Domain.Entities;
+using VBTasks.Domain.Interfaces;
 using VBTasks.Infrastructure.Services;
 
 namespace VBTasks.Infrastructure.Repositories;
