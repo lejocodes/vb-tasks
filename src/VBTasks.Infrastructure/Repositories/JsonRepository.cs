@@ -12,7 +12,17 @@ public abstract class JsonRepository<T> : IRepository<T> where T : IEntity
     protected JsonRepository(JsonFileService jsonService, string fileName)
     {
         _jsonService = jsonService;
-        _filePath = Path.Combine("Data", fileName);
+        
+        // Get the base directory of the application
+        var baseDirectory = AppContext.BaseDirectory;
+        _filePath = Path.Combine(baseDirectory, "Data", fileName);
+        
+        // Ensure the Data directory exists
+        var dataDirectory = Path.GetDirectoryName(_filePath);
+        if (!string.IsNullOrEmpty(dataDirectory) && !Directory.Exists(dataDirectory))
+        {
+            Directory.CreateDirectory(dataDirectory);
+        }
     }
 
     public async Task<IEnumerable<T>> GetAllAsync()
