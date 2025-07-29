@@ -65,7 +65,8 @@
               "buildTarget": "vb-tasks-ui:build:production"
             },
             "development": {
-              "buildTarget": "vb-tasks-ui:build:development"
+              "buildTarget": "vb-tasks-ui:build:development",
+              "proxyConfig": "proxy.conf.json"
             }
           },
           "defaultConfiguration": "development"
@@ -96,5 +97,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": "d4ef680a-0fa5-419a-9656-80e3b8296057"
   }
 }

@@ -1,12 +1,6 @@
-import { Component, inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
-import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
-import { AppState } from '../../../state/app.state';
-import { selectCurrentUser } from '../../../state/auth/auth.selectors';
-import * as AuthActions from '../../../state/auth/auth.actions';
-import { User } from '../../../core/models';
 import { MenubarModule } from 'primeng/menubar';
 import { ButtonModule } from 'primeng/button';
 import { MenuItem } from 'primeng/api';
@@ -20,17 +14,6 @@ import { MenuItem } from 'primeng/api';
       <p-menubar [model]="menuItems" styleClass="mb-0">
         <ng-template pTemplate="start">
           <h2 class="m-0 mr-4">VB-Tasks</h2>
-        </ng-template>
-        <ng-template pTemplate="end">
-          <div class="flex align-items-center" *ngIf="currentUser$ | async as user">
-            <span class="mr-3">{{ user.name }}</span>
-            <p-button
-              label="Logout"
-              icon="pi pi-sign-out"
-              (click)="logout()"
-              [text]="true"
-            ></p-button>
-          </div>
         </ng-template>
       </p-menubar>
 
@@ -63,12 +46,9 @@ import { MenuItem } from 'primeng/api';
   `]
 })
 export class LayoutComponent {
-  private store = inject(Store<AppState>);
-  currentUser$: Observable<User | null>;
   menuItems: MenuItem[];
 
   constructor() {
-    this.currentUser$ = this.store.select(selectCurrentUser);
     this.menuItems = [
       {
         label: 'Dashboard',
@@ -91,9 +71,5 @@ export class LayoutComponent {
         routerLink: '/groups'
       }
     ];
-  }
-
-  logout(): void {
-    this.store.dispatch(AuthActions.logout());
   }
 }

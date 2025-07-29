@@ -8,7 +8,7 @@ import { providePrimeNG } from 'primeng/config';
 import Lara from '@primeng/themes/lara';
 
 import { routes } from './app.routes';
-import { authInterceptor, errorInterceptor } from './core/interceptors';
+import { errorInterceptor } from './core/interceptors';
 import { reducers } from './state';
 import { AuthEffects } from './state/auth/auth.effects';
 
@@ -18,7 +18,7 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideHttpClient(
-      withInterceptors([authInterceptor, errorInterceptor])
+      withInterceptors([errorInterceptor])
     ),
     providePrimeNG({
       theme: {

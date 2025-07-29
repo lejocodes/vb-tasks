@@ -1,6 +1,4 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using VBTasks.Application.DTOs;
 using VBTasks.Application.Interfaces;
 
@@ -8,7 +6,6 @@ namespace VBTasks.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize]
 public class TasksController : ControllerBase
 {
     private readonly ITaskService _taskService;
@@ -38,7 +35,7 @@ public class TasksController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateTask([FromBody] CreateTaskDto dto)
     {
-        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
+        var userId = "default-user";
         var task = await _taskService.CreateTaskAsync(dto, userId);
         return CreatedAtAction(nameof(GetTask), new { id = task.Id }, task);
     }
@@ -66,7 +63,7 @@ public class TasksController : ControllerBase
     [HttpPost("{id}/assign")]
     public async Task<IActionResult> AssignTask(string id, [FromBody] AssignmentDto dto)
     {
-        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
+        var userId = "default-user";
         var result = await _taskService.AssignTaskAsync(id, dto, userId);
         if (!result)
             return NotFound();
@@ -77,7 +74,7 @@ public class TasksController : ControllerBase
     [HttpGet("my-tasks")]
     public async Task<IActionResult> GetMyTasks()
     {
-        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
+        var userId = "default-user";
         var tasks = await _taskService.GetMyTasksAsync(userId);
         return Ok(tasks);
     }

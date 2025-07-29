@@ -107,7 +107,7 @@ import { LoadingSpinnerComponent, StatusBadgeComponent, PriorityBadgeComponent, 
           ></app-empty-state>
 
           <p-table 
-            *ngIf="!loadingTasks && (myTasks$ | async)?.length > 0"
+            *ngIf="!loadingTasks && (myTasks$ | async) && (myTasks$ | async)!.length > 0"
             [value]="(myTasks$ | async) || []"
             [rows]="5"
             [paginator]="false"
@@ -144,7 +144,7 @@ import { LoadingSpinnerComponent, StatusBadgeComponent, PriorityBadgeComponent, 
                     icon="pi pi-pencil" 
                     [rounded]="true" 
                     [text]="true"
-                    severity="warning"
+                    [severity]="'warn'"
                     (click)="editTask(task)"
                     class="ml-2"
                   ></p-button>

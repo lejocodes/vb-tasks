@@ -1,13 +1,10 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using VBTasks.Application.Interfaces;
 
 namespace VBTasks.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize]
 public class GroupsController : ControllerBase
 {
     private readonly IGroupService _groupService;
@@ -39,7 +36,7 @@ public class GroupsController : ControllerBase
     [HttpGet("my-groups")]
     public async Task<IActionResult> GetMyGroups()
     {
-        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
+        var userId = "default-user";
         var groups = await _groupService.GetUserGroupsAsync(userId);
         return Ok(groups);
     }
