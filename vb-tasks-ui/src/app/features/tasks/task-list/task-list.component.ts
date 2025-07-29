@@ -1,13 +1,12 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
 import { CardModule } from 'primeng/card';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { TooltipModule } from 'primeng/tooltip';
-import { TaskService } from '../../../core/services';
+import { TaskStateService } from '../../../core/services';
 import { Task } from '../../../core/models';
 import { 
   LoadingSpinnerComponent, 
@@ -15,6 +14,7 @@ import {
   PriorityBadgeComponent, 
   EmptyStateComponent 
 } from '../../../shared/components';
+import { TaskFilterComponent } from '../task-filter/task-filter.component';
 
 @Component({
   selector: 'app-task-list',
@@ -29,7 +29,8 @@ import {
     LoadingSpinnerComponent,
     StatusBadgeComponent,
     PriorityBadgeComponent,
-    EmptyStateComponent
+    EmptyStateComponent,
+    TaskFilterComponent
   ],
   template: `
     <div class="task-list">
@@ -45,10 +46,22 @@ import {
           </div>
         </ng-template>
 
-        <app-loading-spinner *ngIf="loading" text="Loading tasks..."></app-loading-spinner>
+        <app-task-filter *ngIf="!taskState.loading()"></app-task-filter>
+
+        <app-loading-spinner *ngIf="taskState.loading()" text="Loading tasks..."></app-loading-spinner>
         
         <app-empty-state 
-          *ngIf="!loading && (tasks$ | async)?.length === 0"
+          *ngIf="!taskState.loading() && taskState.hasTasks() && taskState.filteredTasks().length === 0"
+          icon="pi-filter"
+          title="No matching tasks"
+          message="No tasks match your current filters. Try adjusting your filters."
+          actionLabel="Clear Filters"
+          actionIcon="pi pi-filter-slash"
+          [action]="clearFilters.bind(this)"
+        ></app-empty-state>
+
+        <app-empty-state 
+          *ngIf="!taskState.loading() && !taskState.hasTasks()"
           icon="pi-list"
           title="No tasks yet"
           message="Create your first task to get started."
@@ -59,8 +72,8 @@ import {
 
         <p-table 
           #dt
-          *ngIf="!loading && (tasks$ | async) && (tasks$ | async)!.length > 0"
-          [value]="(tasks$ | async) || []"
+          *ngIf="!taskState.loading() && taskState.filteredTasks().length > 0"
+          [value]="taskState.filteredTasks()"
           [paginator]="true"
           [rows]="10"
           [rowsPerPageOptions]="[10, 25, 50]"
@@ -74,7 +87,7 @@ import {
                 <input 
                   pInputText 
                   type="text" 
-                  (input)="dt.filterGlobal($event.target.value, 'contains')" 
+                  (input)="onSearch($any($event.target).value)" 
                   placeholder="Search tasks..." 
                 />
               </span>
@@ -201,22 +214,15 @@ import {
   `]
 })
 export class TaskListComponent implements OnInit {
-  private taskService = inject(TaskService);
+  protected taskState = inject(TaskStateService);
   private router = inject(Router);
-
-  tasks$!: Observable<Task[]>;
-  loading = true;
 
   ngOnInit(): void {
     this.loadTasks();
   }
 
   loadTasks(): void {
-    this.loading = true;
-    this.tasks$ = this.taskService.getMyTasks();
-    this.tasks$.subscribe(() => {
-      this.loading = false;
-    });
+    this.taskState.loadTasks();
   }
 
   createTask(): void {
@@ -231,11 +237,17 @@ export class TaskListComponent implements OnInit {
     this.router.navigate(['/tasks', task.id, 'edit']);
   }
 
-  deleteTask(task: Task): void {
+  async deleteTask(task: Task): Promise<void> {
     if (confirm(`Are you sure you want to delete "${task.title}"?`)) {
-      this.taskService.deleteTask(task.id).subscribe(() => {
-        this.loadTasks();
-      });
+      await this.taskState.deleteTask(task.id);
     }
+  }
+
+  onSearch(value: string): void {
+    this.taskState.updateFilter({ searchTerm: value });
+  }
+
+  clearFilters(): void {
+    this.taskState.clearFilter();
   }
 }

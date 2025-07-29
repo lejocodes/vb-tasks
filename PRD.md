@@ -392,35 +392,75 @@ src/app/
 - ✅ Layout/navigation updated with PrimeNG menubar
 
 ### Pending ⏳
-#### Frontend Development
-- Task Management Features:
-  - Task list with p-table (sorting, filtering, pagination)
-  - Task create/edit forms with PrimeNG form components
-  - Task detail view
-  - Bulk operations
-- Dashboard Implementation:
-  - Task statistics with charts
-  - My tasks widget
-  - Activity feed
-- User and Group Features:
-  - User list with p-table
-  - Group list with p-table
-  - User/Group selectors using p-dropdown
-- UI Polish:
-  - Toast notifications for user feedback
-  - Loading states with p-progressSpinner
-  - Confirmation dialogs for destructive actions
-  - Responsive design improvements
 
-#### Testing & Documentation
-- Unit tests for critical paths
-- API integration tests
-- README with setup instructions
-- API documentation
+#### Core Features Still Needed
+- **Bulk Operations**:
+  - Select multiple tasks with checkboxes
+  - Bulk status update
+  - Bulk delete with confirmation
+  - Bulk assignment
+- **User Profile Views**:
+  - Display user information
+  - Show assigned tasks
+- **Group Detail Views**:
+  - List group members
+  - Show group tasks
+
+#### UI Enhancements
+- **Toast Notifications**:
+  - Success messages for CRUD operations
+  - Error messages with retry options
+- **Loading Overlays**:
+  - Block UI during operations
+  - Progress indicators for long operations
+- **Confirmation Dialogs**:
+  - Delete confirmations using PrimeNG ConfirmDialog
+  - Unsaved changes warnings
+- **Dark Mode Support**:
+  - Theme switcher
+  - Persist preference
+
+#### Testing
+- **Unit Tests**:
+  - State service tests (TaskStateService, UserStateService, GroupStateService)
+  - Component tests (task-list, task-form, task-detail)
+  - Service tests (HTTP services)
+- **Integration Tests**:
+  - API endpoint tests
+  - CRUD operation tests
+- **E2E Tests**:
+  - Task creation flow
+  - Task management flow
+
+#### Performance Optimizations
+- **Frontend**:
+  - Implement OnPush change detection strategy
+  - Virtual scrolling for large lists
+  - Optimize bundle size
+- **Backend**:
+  - Implement caching layer
+  - Add pagination to repository layer
+  - Add response compression
 
 #### Assessment Preparation
 - Create working main branch
 - Branch 1: Build errors (TypeScript/C# compilation issues)
 - Branch 2: Runtime bugs (state mutations, memory leaks)
 - Branch 3: Feature implementation task
-- Evaluation rubric and time guidelines
+- Update INTERVIEW_GUIDE.md with specific bug scenarios
+
+### Estimated Remaining Effort
+- **Must Have (MVP Completion)**: 2-3 days
+  - Bulk operations
+  - Toast notifications
+  - Basic testing
+- **Should Have**: 3-4 days
+  - User/Group detail views
+  - UI enhancements
+  - Performance optimizations
+- **Nice to Have**: 5-7 days
+  - Advanced features (comments, attachments, history)
+  - Comprehensive testing
+  - Documentation
+
+The application has a solid foundation with Signal-based state management, all core CRUD operations, and a clean architecture. The remaining work is primarily UI polish and testing.
