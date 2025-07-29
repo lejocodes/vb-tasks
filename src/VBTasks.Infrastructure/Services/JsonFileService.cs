@@ -1,5 +1,4 @@
 using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace VBTasks.Infrastructure.Services;
 
@@ -12,8 +11,7 @@ public class JsonFileService
         _options = new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true,
-            WriteIndented = true,
-            Converters = { new JsonStringEnumConverter() }
+            WriteIndented = true
         };
     }
 

@@ -29,11 +29,11 @@ public class TaskService : ITaskService
                 t.Description.Contains(filter.SearchTerm, StringComparison.OrdinalIgnoreCase));
         }
 
-        if (filter.Status.HasValue)
-            tasks = tasks.Where(t => t.Status == filter.Status.Value);
+        if (!string.IsNullOrEmpty(filter.Status))
+            tasks = tasks.Where(t => t.Status == filter.Status);
 
-        if (filter.Priority.HasValue)
-            tasks = tasks.Where(t => t.Priority == filter.Priority.Value);
+        if (!string.IsNullOrEmpty(filter.Priority))
+            tasks = tasks.Where(t => t.Priority == filter.Priority);
 
         if (!string.IsNullOrEmpty(filter.AssigneeId))
             tasks = tasks.Where(t => t.Assignments.Any(a => a.AssigneeId == filter.AssigneeId));
@@ -169,13 +169,13 @@ public class TaskService : ITaskService
         {
             TotalTasks = tasksList.Count,
             TasksByStatus = tasksList
-                .GroupBy(t => t.Status.ToString())
+                .GroupBy(t => t.Status)
                 .ToDictionary(g => g.Key, g => g.Count()),
             TasksByPriority = tasksList
-                .GroupBy(t => t.Priority.ToString())
+                .GroupBy(t => t.Priority)
                 .ToDictionary(g => g.Key, g => g.Count()),
             OverdueTasks = tasksList
-                .Count(t => t.DueDate.HasValue && t.DueDate.Value < DateTime.UtcNow && t.Status != Domain.Entities.TaskStatus.Completed)
+                .Count(t => t.DueDate.HasValue && t.DueDate.Value < DateTime.UtcNow && t.Status != "Completed")
         };
 
         return statistics;
