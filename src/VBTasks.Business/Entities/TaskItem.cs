@@ -1,4 +1,4 @@
-namespace VBTasks.Domain.Entities;
+namespace VBTasks.Business.Entities;
 
 public class TaskItem : IEntity
 {

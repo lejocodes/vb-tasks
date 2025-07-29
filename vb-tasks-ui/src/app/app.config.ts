@@ -10,7 +10,6 @@ import Lara from '@primeng/themes/lara';
 import { routes } from './app.routes';
 import { errorInterceptor } from './core/interceptors';
 import { reducers } from './state';
-import { AuthEffects } from './state/auth/auth.effects';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -31,7 +30,7 @@ export const appConfig: ApplicationConfig = {
       }
     }),
     provideStore(reducers),
-    provideEffects([AuthEffects]),
+    provideEffects([]),
     provideStoreDevtools({ maxAge: 25 })
   ]
 };

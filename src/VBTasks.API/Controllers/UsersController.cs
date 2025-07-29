@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using VBTasks.Application.Interfaces;
+using VBTasks.Business.Interfaces;
 
 namespace VBTasks.API.Controllers;
 
@@ -17,7 +17,7 @@ public class UsersController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetUsers()
     {
-        var users = await _userService.GetAllUsersAsync();
+        var users = await _userService.GetUsersAsync();
         return Ok(users);
     }
 

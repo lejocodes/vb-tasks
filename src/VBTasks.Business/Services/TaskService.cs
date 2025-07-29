@@ -1,9 +1,8 @@
-using VBTasks.Application.DTOs;
-using VBTasks.Application.Interfaces;
-using VBTasks.Domain.Entities;
-using VBTasks.Domain.Interfaces;
+using VBTasks.Business.DTOs;
+using VBTasks.Business.Entities;
+using VBTasks.Business.Interfaces;
 
-namespace VBTasks.Application.Services;
+namespace VBTasks.Business.Services;
 
 public class TaskService : ITaskService
 {
@@ -14,7 +13,7 @@ public class TaskService : ITaskService
         _taskRepository = taskRepository;
     }
 
-    public async Task<PagedResultDto<TaskDto>> GetTasksAsync(TaskFilterDto filter)
+    public async Task<PagedResultDto<TaskItem>> GetTasksAsync(TaskFilterDto filter)
     {
         var tasks = await _taskRepository.GetAllAsync();
         
@@ -44,30 +43,24 @@ public class TaskService : ITaskService
         var pagedTasks = tasks
             .OrderByDescending(t => t.UpdatedAt)
             .Skip((filter.PageNumber - 1) * filter.PageSize)
-            .Take(filter.PageSize);
+            .Take(filter.PageSize)
+            .ToList();
 
-        var taskDtos = new List<TaskDto>();
-        foreach (var task in pagedTasks)
+        return new PagedResultDto<TaskItem>
         {
-            taskDtos.Add(MapToTaskDto(task));
-        }
-
-        return new PagedResultDto<TaskDto>
-        {
-            Items = taskDtos,
+            Items = pagedTasks,
             TotalCount = totalCount,
             PageNumber = filter.PageNumber,
             PageSize = filter.PageSize
         };
     }
 
-    public async Task<TaskDto?> GetTaskByIdAsync(string id)
+    public async Task<TaskItem?> GetTaskByIdAsync(string id)
     {
-        var task = await _taskRepository.GetByIdAsync(id);
-        return task != null ? MapToTaskDto(task) : null;
+        return await _taskRepository.GetByIdAsync(id);
     }
 
-    public async Task<TaskDto> CreateTaskAsync(CreateTaskDto dto)
+    public async Task<TaskItem> CreateTaskAsync(CreateTaskDto dto)
     {
         var task = new TaskItem
         {
@@ -84,11 +77,10 @@ public class TaskService : ITaskService
             }).ToList()
         };
 
-        await _taskRepository.CreateAsync(task);
-        return MapToTaskDto(task);
+        return await _taskRepository.CreateAsync(task);
     }
 
-    public async Task<TaskDto?> UpdateTaskAsync(string id, UpdateTaskDto dto)
+    public async Task<TaskItem?> UpdateTaskAsync(string id, UpdateTaskDto dto)
     {
         var task = await _taskRepository.GetByIdAsync(id);
         if (task == null) return null;
@@ -102,7 +94,7 @@ public class TaskService : ITaskService
         task.UpdatedAt = DateTime.UtcNow;
 
         await _taskRepository.UpdateAsync(task);
-        return MapToTaskDto(task);
+        return task;
     }
 
     public async Task<bool> DeleteTaskAsync(string id)
@@ -131,51 +123,26 @@ public class TaskService : ITaskService
         return true;
     }
 
-    public async Task<IEnumerable<TaskDto>> GetAllTasksAsync()
+    public async Task<IEnumerable<TaskItem>> GetAllTasksAsync()
     {
-        var tasks = await _taskRepository.GetAllAsync();
-        return tasks.Select(MapToTaskDto).ToList();
+        return await _taskRepository.GetAllAsync();
     }
 
     public async Task<TaskStatisticsDto> GetTaskStatisticsAsync()
     {
-        var tasks = await _taskRepository.GetAllAsync();
-        var tasksList = tasks.ToList();
+        var tasks = (await _taskRepository.GetAllAsync()).ToList();
 
-        var statistics = new TaskStatisticsDto
+        return new TaskStatisticsDto
         {
-            TotalTasks = tasksList.Count,
-            TasksByStatus = tasksList
+            TotalTasks = tasks.Count,
+            TasksByStatus = tasks
                 .GroupBy(t => t.Status)
                 .ToDictionary(g => g.Key, g => g.Count()),
-            TasksByPriority = tasksList
+            TasksByPriority = tasks
                 .GroupBy(t => t.Priority)
                 .ToDictionary(g => g.Key, g => g.Count()),
-            OverdueTasks = tasksList
+            OverdueTasks = tasks
                 .Count(t => t.DueDate.HasValue && t.DueDate.Value < DateTime.UtcNow && t.Status != "Completed")
-        };
-
-        return statistics;
-    }
-
-    private TaskDto MapToTaskDto(TaskItem task)
-    {
-        return new TaskDto
-        {
-            Id = task.Id,
-            Title = task.Title,
-            Description = task.Description,
-            Status = task.Status,
-            Priority = task.Priority,
-            DueDate = task.DueDate,
-            CreatedAt = task.CreatedAt,
-            UpdatedAt = task.UpdatedAt,
-            Assignments = task.Assignments.Select(a => new AssignmentDto
-            {
-                AssigneeType = a.AssigneeType,
-                AssigneeId = a.AssigneeId
-            }).ToList(),
-            Tags = task.Tags
         };
     }
 }

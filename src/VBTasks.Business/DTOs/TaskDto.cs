@@ -1,21 +1,6 @@
 using System.ComponentModel.DataAnnotations;
-using VBTasks.Domain.Entities;
 
-namespace VBTasks.Application.DTOs;
-
-public class TaskDto
-{
-    public string Id { get; set; } = string.Empty;
-    public string Title { get; set; } = string.Empty;
-    public string Description { get; set; } = string.Empty;
-    public string Status { get; set; } = "New";
-    public string Priority { get; set; } = "Medium";
-    public DateTime? DueDate { get; set; }
-    public DateTime CreatedAt { get; set; }
-    public DateTime UpdatedAt { get; set; }
-    public List<AssignmentDto> Assignments { get; set; } = new();
-    public List<string> Tags { get; set; } = new();
-}
+namespace VBTasks.Business.DTOs;
 
 public class CreateTaskDto
 {
@@ -32,19 +17,9 @@ public class CreateTaskDto
     public List<AssignmentDto> Assignments { get; set; } = new();
 }
 
-public class UpdateTaskDto
+public class UpdateTaskDto : CreateTaskDto
 {
-    [Required(ErrorMessage = "Title is required")]
-    [StringLength(200, MinimumLength = 1, ErrorMessage = "Title must be between 1 and 200 characters")]
-    public string Title { get; set; } = string.Empty;
-    
-    [StringLength(2000, ErrorMessage = "Description cannot exceed 2000 characters")]
-    public string Description { get; set; } = string.Empty;
-    
     public string Status { get; set; } = "New";
-    public string Priority { get; set; } = "Medium";
-    public DateTime? DueDate { get; set; }
-    public List<string> Tags { get; set; } = new();
 }
 
 public class AssignmentDto

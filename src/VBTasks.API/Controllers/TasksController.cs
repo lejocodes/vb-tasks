@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using VBTasks.Application.DTOs;
-using VBTasks.Application.Interfaces;
+using VBTasks.Business.DTOs;
+using VBTasks.Business.Entities;
+using VBTasks.Business.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace VBTasks.API.Controllers;
@@ -19,7 +20,7 @@ public class TasksController : ControllerBase
 
     [HttpGet]
     [SwaggerOperation(Summary = "Get all tasks", Description = "Retrieves a paginated list of tasks with optional filtering")]
-    [SwaggerResponse(200, "Success", typeof(PagedResultDto<TaskDto>))]
+    [SwaggerResponse(200, "Success", typeof(PagedResultDto<TaskItem>))]
     public async Task<IActionResult> GetTasks([FromQuery] TaskFilterDto filter)
     {
         var tasks = await _taskService.GetTasksAsync(filter);
@@ -28,7 +29,7 @@ public class TasksController : ControllerBase
 
     [HttpGet("{id}")]
     [SwaggerOperation(Summary = "Get task by ID", Description = "Retrieves a specific task by its ID")]
-    [SwaggerResponse(200, "Success", typeof(TaskDto))]
+    [SwaggerResponse(200, "Success", typeof(TaskItem))]
     [SwaggerResponse(404, "Task not found")]
     public async Task<IActionResult> GetTask(string id)
     {
@@ -41,18 +42,17 @@ public class TasksController : ControllerBase
 
     [HttpPost]
     [SwaggerOperation(Summary = "Create a new task", Description = "Creates a new task in the system")]
-    [SwaggerResponse(201, "Task created", typeof(TaskDto))]
+    [SwaggerResponse(201, "Task created", typeof(TaskItem))]
     [SwaggerResponse(400, "Invalid request")]
     public async Task<IActionResult> CreateTask([FromBody] CreateTaskDto dto)
     {
-        var userId = "default-user";
-        var task = await _taskService.CreateTaskAsync(dto, userId);
+        var task = await _taskService.CreateTaskAsync(dto);
         return CreatedAtAction(nameof(GetTask), new { id = task.Id }, task);
     }
 
     [HttpPut("{id}")]
     [SwaggerOperation(Summary = "Update task", Description = "Updates an existing task")]
-    [SwaggerResponse(200, "Task updated", typeof(TaskDto))]
+    [SwaggerResponse(200, "Task updated", typeof(TaskItem))]
     [SwaggerResponse(404, "Task not found")]
     public async Task<IActionResult> UpdateTask(string id, [FromBody] UpdateTaskDto dto)
     {
@@ -77,23 +77,24 @@ public class TasksController : ControllerBase
     }
 
     [HttpPost("{id}/assign")]
-    public async Task<IActionResult> AssignTask(string id, [FromBody] AssignmentDto dto)
+    [SwaggerOperation(Summary = "Assign task", Description = "Add an assignee to a task")]
+    [SwaggerResponse(200, "Task assigned")]
+    [SwaggerResponse(404, "Task not found")]
+    public async Task<IActionResult> AssignTask(string id, [FromBody] AssignmentDto assignment)
     {
-        var userId = "default-user";
-        var result = await _taskService.AssignTaskAsync(id, dto, userId);
+        var result = await _taskService.AssignTaskAsync(id, assignment);
         if (!result)
             return NotFound();
 
         return Ok(new { message = "Task assigned successfully" });
     }
 
-    [HttpGet("my-tasks")]
-    [SwaggerOperation(Summary = "Get current user's tasks", Description = "Retrieves all tasks assigned to the current user")]
-    [SwaggerResponse(200, "Success", typeof(IEnumerable<TaskDto>))]
-    public async Task<IActionResult> GetMyTasks()
+    [HttpGet("all")]
+    [SwaggerOperation(Summary = "Get all tasks", Description = "Retrieves all tasks without pagination")]
+    [SwaggerResponse(200, "Success", typeof(IEnumerable<TaskItem>))]
+    public async Task<IActionResult> GetAllTasks()
     {
-        var userId = "default-user";
-        var tasks = await _taskService.GetMyTasksAsync(userId);
+        var tasks = await _taskService.GetAllTasksAsync();
         return Ok(tasks);
     }
 

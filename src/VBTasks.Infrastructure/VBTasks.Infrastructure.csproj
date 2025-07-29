@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\VBTasks.Application\VBTasks.Application.csproj" />
+    <ProjectReference Include="..\VBTasks.Business\VBTasks.Business.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
