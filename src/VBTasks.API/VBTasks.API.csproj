@@ -13,7 +13,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\VBTasks.Application\VBTasks.Application.csproj" />
     <ProjectReference Include="..\VBTasks.Business\VBTasks.Business.csproj" />
+    <ProjectReference Include="..\VBTasks.Domain\VBTasks.Domain.csproj" />
     <ProjectReference Include="..\VBTasks.Infrastructure\VBTasks.Infrastructure.csproj" />
   </ItemGroup>
 

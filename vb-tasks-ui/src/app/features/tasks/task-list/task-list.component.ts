@@ -8,7 +8,7 @@ import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { TooltipModule } from 'primeng/tooltip';
 import { TaskService } from '../../../core/services';
-import { Task } from '../../../core/models';
+import { Task, PagedResult, TaskFilter } from '../../../core/models';
 import { 
   LoadingSpinnerComponent, 
   StatusBadgeComponent, 
@@ -47,26 +47,29 @@ import {
 
         <app-loading-spinner *ngIf="loading" text="Loading tasks..."></app-loading-spinner>
         
-        <app-empty-state 
-          *ngIf="!loading && (tasks$ | async)?.length === 0"
-          icon="pi-list"
-          title="No tasks yet"
-          message="Create your first task to get started."
-          actionLabel="Create Task"
-          actionIcon="pi pi-plus"
-          [action]="createTask.bind(this)"
-        ></app-empty-state>
+        <ng-container *ngIf="!loading && (tasks$ | async) as tasksResult">
+          <app-empty-state 
+            *ngIf="!tasksResult || tasksResult.items.length === 0"
+            icon="pi-list"
+            title="No tasks yet"
+            message="Create your first task to get started."
+            actionLabel="Create Task"
+            actionIcon="pi pi-plus"
+            [action]="createTask.bind(this)"
+          ></app-empty-state>
 
-        <p-table 
-          #dt
-          *ngIf="!loading && (tasks$ | async) && (tasks$ | async)!.length > 0"
-          [value]="(tasks$ | async) || []"
-          [paginator]="true"
-          [rows]="10"
-          [rowsPerPageOptions]="[10, 25, 50]"
-          styleClass="p-datatable-sm"
-          [globalFilterFields]="['title', 'description']"
-        >
+          <p-table 
+            #dt
+            *ngIf="tasksResult && tasksResult.items.length > 0"
+            [value]="tasksResult.items"
+            [paginator]="true"
+            [rows]="currentFilter.pageSize"
+            [totalRecords]="tasksResult.totalCount"
+            [rowsPerPageOptions]="[10, 25, 50]"
+            styleClass="p-datatable-sm"
+            [globalFilterFields]="['title', 'description']"
+            (onPage)="onPageChange($event)"
+          >
           <ng-template pTemplate="caption">
             <div class="flex">
               <span class="p-input-icon-left ml-auto">
@@ -132,6 +135,7 @@ import {
             </tr>
           </ng-template>
         </p-table>
+        </ng-container>
       </p-card>
     </div>
   `,
@@ -204,8 +208,12 @@ export class TaskListComponent implements OnInit {
   private taskService = inject(TaskService);
   private router = inject(Router);
 
-  tasks$!: Observable<Task[]>;
+  tasks$!: Observable<PagedResult<Task>>;
   loading = true;
+  currentFilter: Partial<TaskFilter> = {
+    pageNumber: 1,
+    pageSize: 10
+  };
 
   ngOnInit(): void {
     this.loadTasks();
@@ -213,7 +221,7 @@ export class TaskListComponent implements OnInit {
 
   loadTasks(): void {
     this.loading = true;
-    this.tasks$ = this.taskService.getMyTasks();
+    this.tasks$ = this.taskService.getTasks(this.currentFilter);
     this.tasks$.subscribe(() => {
       this.loading = false;
     });
@@ -237,5 +245,11 @@ export class TaskListComponent implements OnInit {
         this.loadTasks();
       });
     }
+  }
+
+  onPageChange(event: any): void {
+    this.currentFilter.pageNumber = event.page + 1; // PrimeNG uses 0-based index
+    this.currentFilter.pageSize = event.rows;
+    this.loadTasks();
   }
 }
