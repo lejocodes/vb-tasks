@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__ide__getDiagnostics",
+      "Bash(git check-ignore:*)",
+      "Bash(find:*)",
+      "Bash(npm install:*)",
+      "Bash(touch:*)",
+      "Bash(rm:*)"
+    ],
+    "deny": []
+  }
+}

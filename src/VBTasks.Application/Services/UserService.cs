@@ -1,10 +1,10 @@
 using VBTasks.Application.DTOs;
 using VBTasks.Application.Interfaces;
-using VBTasks.Domain.Interfaces;
+using VBTasks.Business.Interfaces;
 
 namespace VBTasks.Application.Services;
 
-public class UserService : IUserService
+public class UserService : Application.Interfaces.IUserService
 {
     private readonly IUserRepository _userRepository;
 

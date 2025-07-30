@@ -1,7 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
 import { CardModule } from 'primeng/card';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
@@ -15,6 +14,7 @@ import {
   PriorityBadgeComponent, 
   EmptyStateComponent 
 } from '../../../shared/components';
+import { TaskFilterComponent } from '../task-filter/task-filter.component';
 
 @Component({
   selector: 'app-task-list',
@@ -29,7 +29,8 @@ import {
     LoadingSpinnerComponent,
     StatusBadgeComponent,
     PriorityBadgeComponent,
-    EmptyStateComponent
+    EmptyStateComponent,
+    TaskFilterComponent
   ],
   template: `
     <div class="task-list">
@@ -45,7 +46,9 @@ import {
           </div>
         </ng-template>
 
-        <app-loading-spinner *ngIf="loading" text="Loading tasks..."></app-loading-spinner>
+        <app-task-filter *ngIf="!taskState.loading()"></app-task-filter>
+
+        <app-loading-spinner *ngIf="taskState.loading()" text="Loading tasks..."></app-loading-spinner>
         
         <ng-container *ngIf="!loading && (tasks$ | async) as tasksResult">
           <app-empty-state 
@@ -77,7 +80,7 @@ import {
                 <input 
                   pInputText 
                   type="text" 
-                  (input)="dt.filterGlobal($event.target.value, 'contains')" 
+                  (input)="onSearch($any($event.target).value)" 
                   placeholder="Search tasks..." 
                 />
               </span>
@@ -205,7 +208,7 @@ import {
   `]
 })
 export class TaskListComponent implements OnInit {
-  private taskService = inject(TaskService);
+  protected taskState = inject(TaskStateService);
   private router = inject(Router);
 
   tasks$!: Observable<PagedResult<Task>>;
@@ -239,7 +242,7 @@ export class TaskListComponent implements OnInit {
     this.router.navigate(['/tasks', task.id, 'edit']);
   }
 
-  deleteTask(task: Task): void {
+  async deleteTask(task: Task): Promise<void> {
     if (confirm(`Are you sure you want to delete "${task.title}"?`)) {
       this.taskService.deleteTask(task.id).subscribe(() => {
         this.loadTasks();

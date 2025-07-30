@@ -1,7 +1,5 @@
 using VBTasks.API.Middleware;
-using VBTasks.Application.Interfaces;
-using VBTasks.Application.Services;
-using VBTasks.Domain.Interfaces;
+using VBTasks.Business.Interfaces;
 using VBTasks.Infrastructure.Repositories;
 using VBTasks.Infrastructure.Services;
 
@@ -48,9 +46,9 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IGroupRepository, GroupRepository>();
 
 // Register application services
-builder.Services.AddScoped<ITaskService, TaskService>();
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IGroupService, GroupService>();
+builder.Services.AddScoped<VBTasks.Application.Interfaces.ITaskService, VBTasks.Application.Services.TaskService>();
+builder.Services.AddScoped<VBTasks.Application.Interfaces.IUserService, VBTasks.Application.Services.UserService>();
+builder.Services.AddScoped<VBTasks.Application.Interfaces.IGroupService, VBTasks.Application.Services.GroupService>();
 
 var app = builder.Build();
 

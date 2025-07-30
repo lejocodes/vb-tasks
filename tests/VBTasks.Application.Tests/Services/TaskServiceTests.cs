@@ -1,8 +1,8 @@
 using Moq;
 using VBTasks.Application.DTOs;
 using VBTasks.Application.Services;
-using VBTasks.Domain.Entities;
-using VBTasks.Domain.Interfaces;
+using VBTasks.Business.Entities;
+using VBTasks.Business.Interfaces;
 using Xunit;
 
 namespace VBTasks.Application.Tests.Services;
@@ -10,16 +10,12 @@ namespace VBTasks.Application.Tests.Services;
 public class TaskServiceTests
 {
     private readonly Mock<ITaskRepository> _taskRepositoryMock;
-    private readonly Mock<IUserRepository> _userRepositoryMock;
-    private readonly Mock<IGroupRepository> _groupRepositoryMock;
     private readonly TaskService _taskService;
 
     public TaskServiceTests()
     {
         _taskRepositoryMock = new Mock<ITaskRepository>();
-        _userRepositoryMock = new Mock<IUserRepository>();
-        _groupRepositoryMock = new Mock<IGroupRepository>();
-        _taskService = new TaskService(_taskRepositoryMock.Object, _userRepositoryMock.Object, _groupRepositoryMock.Object);
+        _taskService = new TaskService(_taskRepositoryMock.Object);
     }
 
     [Fact]
@@ -31,10 +27,7 @@ public class TaskServiceTests
             new TaskItem { Id = "1", Title = "Task 1", Status = "New", Priority = "High" },
             new TaskItem { Id = "2", Title = "Task 2", Status = "InProgress", Priority = "Medium" }
         };
-        var user = new User { Id = "user1", Name = "Test User", Email = "test@example.com" };
-        
         _taskRepositoryMock.Setup(x => x.GetAllAsync()).ReturnsAsync(tasks);
-        _userRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<string>())).ReturnsAsync(user);
 
         var filter = new TaskFilterDto { PageNumber = 1, PageSize = 10 };
 
@@ -57,10 +50,7 @@ public class TaskServiceTests
             new TaskItem { Id = "2", Title = "Task 2", Status = "InProgress" },
             new TaskItem { Id = "3", Title = "Task 3", Status = "New" }
         };
-        var user = new User { Id = "user1", Name = "Test User", Email = "test@example.com" };
-        
         _taskRepositoryMock.Setup(x => x.GetAllAsync()).ReturnsAsync(tasks);
-        _userRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<string>())).ReturnsAsync(user);
 
         var filter = new TaskFilterDto 
         { 
@@ -81,22 +71,19 @@ public class TaskServiceTests
     public async Task CreateTaskAsync_ValidInput_CreatesTask()
     {
         // Arrange
-        var userId = "user1";
         var createDto = new CreateTaskDto
         {
             Title = "New Task",
             Description = "Task Description",
             Priority = "High",
-            Tags = new List<string> { "tag1", "tag2" }
+            Tags = new List<string> { "tag1", "tag2" },
+            Assignments = new List<AssignmentDto>()
         };
-        var user = new User { Id = userId, Name = "Test User", Email = "test@example.com" };
-
-        _userRepositoryMock.Setup(x => x.GetByIdAsync(userId)).ReturnsAsync(user);
         _taskRepositoryMock.Setup(x => x.CreateAsync(It.IsAny<TaskItem>()))
             .ReturnsAsync((TaskItem task) => task);
 
         // Act
-        var result = await _taskService.CreateTaskAsync(createDto, userId);
+        var result = await _taskService.CreateTaskAsync(createDto);
 
         // Assert
         Assert.Equal(createDto.Title, result.Title);
@@ -124,11 +111,8 @@ public class TaskServiceTests
             Status = "InProgress",
             Priority = "High"
         };
-        var user = new User { Id = "user1", Name = "Test User", Email = "test@example.com" };
-
         _taskRepositoryMock.Setup(x => x.GetByIdAsync(taskId)).ReturnsAsync(existingTask);
         _taskRepositoryMock.Setup(x => x.UpdateAsync(It.IsAny<TaskItem>())).Returns(Task.CompletedTask);
-        _userRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<string>())).ReturnsAsync(user);
 
         // Act
         var result = await _taskService.UpdateTaskAsync(taskId, updateDto);
@@ -174,10 +158,9 @@ public class TaskServiceTests
     }
 
     [Fact]
-    public async Task GetGroupTasksAsync_ReturnsTasksForGroup()
+    public async Task GetAllTasksAsync_ReturnsAllTasks()
     {
         // Arrange
-        var groupId = "group1";
         var tasks = new List<TaskItem>
         {
             new TaskItem { Id = "1", Title = "Group Task 1" },
@@ -185,15 +168,14 @@ public class TaskServiceTests
         };
         var user = new User { Id = "user1", Name = "Test User", Email = "test@example.com" };
 
-        _taskRepositoryMock.Setup(x => x.GetTasksByGroupAsync(groupId)).ReturnsAsync(tasks);
-        _userRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<string>())).ReturnsAsync(user);
+        _taskRepositoryMock.Setup(x => x.GetAllAsync()).ReturnsAsync(tasks);
 
         // Act
-        var result = await _taskService.GetGroupTasksAsync(groupId);
+        var result = await _taskService.GetAllTasksAsync();
 
         // Assert
         Assert.Equal(2, result.Count());
-        _taskRepositoryMock.Verify(x => x.GetTasksByGroupAsync(groupId), Times.Once);
+        _taskRepositoryMock.Verify(x => x.GetAllAsync(), Times.Once);
     }
 
     [Fact]
@@ -233,7 +215,6 @@ public class TaskServiceTests
     {
         // Arrange
         var taskId = "1";
-        var userId = "user1";
         var existingTask = new TaskItem 
         { 
             Id = taskId,
@@ -249,7 +230,7 @@ public class TaskServiceTests
         _taskRepositoryMock.Setup(x => x.UpdateAsync(It.IsAny<TaskItem>())).Returns(Task.CompletedTask);
 
         // Act
-        var result = await _taskService.AssignTaskAsync(taskId, assignmentDto, userId);
+        var result = await _taskService.AssignTaskAsync(taskId, assignmentDto);
 
         // Assert
         Assert.True(result);

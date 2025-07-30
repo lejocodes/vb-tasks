@@ -1,10 +1,10 @@
 using VBTasks.Application.DTOs;
 using VBTasks.Application.Interfaces;
-using VBTasks.Domain.Interfaces;
+using VBTasks.Business.Interfaces;
 
 namespace VBTasks.Application.Services;
 
-public class GroupService : IGroupService
+public class GroupService : Application.Interfaces.IGroupService
 {
     private readonly IGroupRepository _groupRepository;
     private readonly IUserRepository _userRepository;
@@ -47,7 +47,7 @@ public class GroupService : IGroupService
         return groupDtos;
     }
 
-    private async Task<GroupDto> MapToGroupDtoAsync(Domain.Entities.Group group)
+    private async Task<GroupDto> MapToGroupDtoAsync(Business.Entities.Group group)
     {
         var members = new List<UserSummaryDto>();
         

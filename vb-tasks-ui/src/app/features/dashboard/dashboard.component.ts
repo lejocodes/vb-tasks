@@ -5,9 +5,8 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
-import { TaskService } from '../../core/services';
-import { Task, TaskStatistics } from '../../core/models';
+import { TaskStateService } from '../../core/services';
+import { Task } from '../../core/models';
 import { LoadingSpinnerComponent, StatusBadgeComponent, PriorityBadgeComponent, EmptyStateComponent } from '../../shared/components';
 
 @Component({
@@ -30,48 +29,48 @@ import { LoadingSpinnerComponent, StatusBadgeComponent, PriorityBadgeComponent, 
       
       <div class="grid">
         <!-- Statistics Cards -->
-        <div class="col-12 md:col-6 lg:col-3" *ngIf="statistics$ | async as stats">
+        <div class="col-12 md:col-6 lg:col-3">
           <p-card>
             <div class="stat-content">
               <div>
                 <span class="stat-label">Total Tasks</span>
-                <div class="stat-value">{{ stats.totalTasks }}</div>
+                <div class="stat-value">{{ taskState.taskCount() }}</div>
               </div>
               <i class="pi pi-list stat-icon" style="color: #2196F3"></i>
             </div>
           </p-card>
         </div>
 
-        <div class="col-12 md:col-6 lg:col-3" *ngIf="statistics$ | async as stats">
+        <div class="col-12 md:col-6 lg:col-3">
           <p-card>
             <div class="stat-content">
               <div>
                 <span class="stat-label">In Progress</span>
-                <div class="stat-value">{{ stats.tasksByStatus['InProgress'] || 0 }}</div>
+                <div class="stat-value">{{ taskState.tasksByStatus().inProgress }}</div>
               </div>
               <i class="pi pi-spinner stat-icon" style="color: #FFC107"></i>
             </div>
           </p-card>
         </div>
 
-        <div class="col-12 md:col-6 lg:col-3" *ngIf="statistics$ | async as stats">
+        <div class="col-12 md:col-6 lg:col-3">
           <p-card>
             <div class="stat-content">
               <div>
                 <span class="stat-label">Completed</span>
-                <div class="stat-value">{{ stats.tasksByStatus['Completed'] || 0 }}</div>
+                <div class="stat-value">{{ taskState.tasksByStatus().completed }}</div>
               </div>
               <i class="pi pi-check-circle stat-icon" style="color: #4CAF50"></i>
             </div>
           </p-card>
         </div>
 
-        <div class="col-12 md:col-6 lg:col-3" *ngIf="statistics$ | async as stats">
+        <div class="col-12 md:col-6 lg:col-3">
           <p-card>
             <div class="stat-content">
               <div>
-                <span class="stat-label">Overdue</span>
-                <div class="stat-value">{{ stats.overdueTasks }}</div>
+                <span class="stat-label">New</span>
+                <div class="stat-value">{{ taskState.tasksByStatus().new }}</div>
               </div>
               <i class="pi pi-exclamation-triangle stat-icon" style="color: #F44336"></i>
             </div>
@@ -94,10 +93,10 @@ import { LoadingSpinnerComponent, StatusBadgeComponent, PriorityBadgeComponent, 
             </div>
           </ng-template>
 
-          <app-loading-spinner *ngIf="loadingTasks" text="Loading tasks..."></app-loading-spinner>
+          <app-loading-spinner *ngIf="taskState.loading()" text="Loading tasks..."></app-loading-spinner>
           
           <app-empty-state 
-            *ngIf="!loadingTasks && (myTasks$ | async)?.length === 0"
+            *ngIf="!taskState.loading() && !taskState.hasTasks()"
             icon="pi-check-circle"
             title="No tasks assigned"
             message="You don't have any tasks assigned to you."
@@ -107,8 +106,8 @@ import { LoadingSpinnerComponent, StatusBadgeComponent, PriorityBadgeComponent, 
           ></app-empty-state>
 
           <p-table 
-            *ngIf="!loadingTasks && (myTasks$ | async) && (myTasks$ | async)!.length > 0"
-            [value]="(myTasks$ | async) || []"
+            *ngIf="!taskState.loading() && taskState.hasTasks()"
+            [value]="taskState.tasks() | slice:0:5"
             [rows]="5"
             [paginator]="false"
             styleClass="p-datatable-sm"
@@ -268,25 +267,15 @@ import { LoadingSpinnerComponent, StatusBadgeComponent, PriorityBadgeComponent, 
   `]
 })
 export class DashboardComponent implements OnInit {
-  private taskService = inject(TaskService);
+  protected taskState = inject(TaskStateService);
   private router = inject(Router);
-
-  statistics$!: Observable<TaskStatistics>;
-  myTasks$!: Observable<Task[]>;
-  loadingTasks = true;
 
   ngOnInit(): void {
     this.loadData();
   }
 
   loadData(): void {
-    this.statistics$ = this.taskService.getStatistics();
-    this.myTasks$ = this.taskService.getMyTasks();
-    
-    // Set loading to false after tasks are loaded
-    this.myTasks$.subscribe(() => {
-      this.loadingTasks = false;
-    });
+    this.taskState.loadTasks();
   }
 
   navigateToTasks(): void {

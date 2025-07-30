@@ -14,8 +14,16 @@ export const routes: Routes = [
         loadChildren: () => import('./features/tasks/tasks.routes').then(m => m.TASK_ROUTES)
       },
       {
+        path: 'users',
+        loadChildren: () => import('./features/users/users.routes').then(m => m.USER_ROUTES)
+      },
+      {
+        path: 'groups',
+        loadChildren: () => import('./features/groups/groups.routes').then(m => m.GROUP_ROUTES)
+      },
+      {
         path: '',
-        redirectTo: 'tasks',
+        redirectTo: 'dashboard',
         pathMatch: 'full'
       }
     ]
