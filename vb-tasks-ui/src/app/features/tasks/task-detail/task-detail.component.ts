@@ -97,7 +97,7 @@ import {
             <div class="col-12 md:col-6">
               <div class="detail-item">
                 <span class="detail-label">Assigned To</span>
-                <span class="detail-value">{{ task.assignedTo?.name || 'Unassigned' }}</span>
+                <span class="detail-value">{{ task.assignments && task.assignments.length > 0 ? 'Assigned' : 'Unassigned' }}</span>
               </div>
             </div>
 

@@ -4,13 +4,15 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router, ActivatedRoute } from '@angular/router';
 import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
-import { InputTextareaModule } from 'primeng/inputtextarea';
-import { DropdownModule } from 'primeng/dropdown';
-import { CalendarModule } from 'primeng/calendar';
+import { Textarea } from 'primeng/textarea';
+import { Select } from 'primeng/select';
+import { DatePicker } from 'primeng/datepicker';
 import { ButtonModule } from 'primeng/button';
-import { ChipsModule } from 'primeng/chips';
+import { InputGroupModule } from 'primeng/inputgroup';
+import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
+import { ChipModule } from 'primeng/chip';
 import { TaskStateService, UserStateService, GroupStateService } from '../../../core/services';
-import { TaskStatus, Priority, Task, User, Group } from '../../../core/models';
+import { TaskStatus, Priority, Task, User, Group, CreateTaskRequest, UpdateTaskRequest, AssigneeType } from '../../../core/models';
 import { LoadingSpinnerComponent } from '../../../shared/components';
 
 interface SelectOption {
@@ -26,11 +28,13 @@ interface SelectOption {
     ReactiveFormsModule,
     CardModule,
     InputTextModule,
-    InputTextareaModule,
-    DropdownModule,
-    CalendarModule,
+    Textarea,
+    Select,
+    DatePicker,
     ButtonModule,
-    ChipsModule,
+    InputGroupModule,
+    InputGroupAddonModule,
+    ChipModule,
     LoadingSpinnerComponent
   ],
   template: `
@@ -65,60 +69,65 @@ interface SelectOption {
             <div class="col-12">
               <div class="field">
                 <label for="description">Description</label>
-                <textarea 
-                  pInputTextarea 
+                <p-textarea
                   id="description" 
                   formControlName="description" 
-                  class="w-full"
                   rows="4"
+                  cols="30"
+                  styleClass="w-full"
                   placeholder="Enter task description"
-                ></textarea>
+                ></p-textarea>
               </div>
             </div>
 
             <div class="col-12 md:col-6">
               <div class="field">
                 <label for="status">Status <span class="text-red-500">*</span></label>
-                <p-dropdown 
+                <p-select
                   id="status"
                   formControlName="status" 
                   [options]="statusOptions" 
                   placeholder="Select status"
                   styleClass="w-full"
-                ></p-dropdown>
+                  optionLabel="label"
+                  optionValue="value"
+                ></p-select>
               </div>
             </div>
 
             <div class="col-12 md:col-6">
               <div class="field">
                 <label for="priority">Priority <span class="text-red-500">*</span></label>
-                <p-dropdown 
+                <p-select
                   id="priority"
                   formControlName="priority" 
                   [options]="priorityOptions" 
                   placeholder="Select priority"
                   styleClass="w-full"
-                ></p-dropdown>
+                  optionLabel="label"
+                  optionValue="value"
+                ></p-select>
               </div>
             </div>
 
             <div class="col-12 md:col-6">
               <div class="field">
                 <label for="dueDate">Due Date</label>
-                <p-calendar 
+                <p-datepicker
                   id="dueDate"
                   formControlName="dueDate" 
-                  [showIcon]="true"
                   dateFormat="mm/dd/yy"
                   styleClass="w-full"
-                ></p-calendar>
+                  [iconDisplay]="'input'"
+                  [showIcon]="true"
+                ></p-datepicker>
               </div>
             </div>
 
             <div class="col-12 md:col-6">
               <div class="field">
                 <label for="assignedTo">Assign To</label>
-                <p-dropdown 
+                <p-select
                   id="assignedTo"
                   formControlName="assignedTo" 
                   [options]="userOptions" 
@@ -126,19 +135,30 @@ interface SelectOption {
                   [filter]="true"
                   styleClass="w-full"
                   [showClear]="true"
-                ></p-dropdown>
+                  optionLabel="label"
+                  optionValue="value"
+                ></p-select>
               </div>
             </div>
 
             <div class="col-12">
               <div class="field">
                 <label for="tags">Tags</label>
-                <p-chips 
-                  id="tags"
-                  formControlName="tags" 
-                  styleClass="w-full"
-                  placeholder="Add tags"
-                ></p-chips>
+                <div class="tags-container">
+                  <p-chip 
+                    *ngFor="let tag of taskForm.get('tags')?.value; let i = index"
+                    [label]="tag"
+                    [removable]="true"
+                    (onRemove)="removeTag(i)"
+                  ></p-chip>
+                  <input 
+                    pInputText
+                    #tagInput
+                    placeholder="Add tag and press Enter"
+                    (keyup.enter)="addTag(tagInput)"
+                    class="tag-input"
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -245,14 +265,26 @@ interface SelectOption {
       color: #ef4444;
     }
 
+    .tags-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .tag-input {
+      flex: 1;
+      min-width: 200px;
+    }
+
     :host ::ng-deep {
       .p-card {
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         border: 1px solid var(--surface-border);
       }
 
-      .p-dropdown,
-      .p-calendar {
+      .p-select,
+      .p-datepicker {
         width: 100%;
       }
 
@@ -345,7 +377,7 @@ export class TaskFormComponent implements OnInit {
         status: task.status,
         priority: task.priority,
         dueDate: task.dueDate ? new Date(task.dueDate) : null,
-        assignedTo: task.assignedTo?.id || null,
+        assignedTo: task.assignments?.length > 0 ? task.assignments[0].assigneeId : null,
         tags: task.tags || []
       });
     }
@@ -359,28 +391,30 @@ export class TaskFormComponent implements OnInit {
     this.saving = true;
     const formValue = this.taskForm.value;
     
-    const taskData: Partial<Task> = {
-      title: formValue.title,
-      description: formValue.description,
-      status: formValue.status,
-      priority: formValue.priority,
-      dueDate: formValue.dueDate ? formValue.dueDate.toISOString() : undefined,
-      tags: formValue.tags || []
-    };
-
-    // Handle assignment
-    if (formValue.assignedTo) {
-      const user = this.userState.getUserById(formValue.assignedTo);
-      if (user) {
-        taskData.assignedTo = user;
-      }
-    }
-
     try {
       if (this.isEditMode && this.taskId) {
-        await this.taskState.updateTask(this.taskId, taskData);
+        const updateRequest: UpdateTaskRequest = {
+          title: formValue.title,
+          description: formValue.description,
+          status: formValue.status,
+          priority: formValue.priority,
+          dueDate: formValue.dueDate ? formValue.dueDate.toISOString() : null,
+          tags: formValue.tags || []
+        };
+        await this.taskState.updateTask(this.taskId, updateRequest);
       } else {
-        await this.taskState.createTask(taskData);
+        const createRequest: CreateTaskRequest = {
+          title: formValue.title,
+          description: formValue.description,
+          priority: formValue.priority,
+          dueDate: formValue.dueDate ? formValue.dueDate.toISOString() : null,
+          tags: formValue.tags || [],
+          assignments: formValue.assignedTo ? [{
+            assigneeType: AssigneeType.User,
+            assigneeId: formValue.assignedTo
+          }] : []
+        };
+        await this.taskState.createTask(createRequest);
       }
       
       this.router.navigate(['/tasks']);
@@ -389,6 +423,27 @@ export class TaskFormComponent implements OnInit {
     } finally {
       this.saving = false;
     }
+  }
+
+  addTag(input: HTMLInputElement): void {
+    const value = input.value.trim();
+    if (value) {
+      const currentTags = this.taskForm.get('tags')?.value || [];
+      if (!currentTags.includes(value)) {
+        this.taskForm.patchValue({
+          tags: [...currentTags, value]
+        });
+      }
+      input.value = '';
+    }
+  }
+
+  removeTag(index: number): void {
+    const currentTags = this.taskForm.get('tags')?.value || [];
+    currentTags.splice(index, 1);
+    this.taskForm.patchValue({
+      tags: [...currentTags]
+    });
   }
 
   onCancel(): void {

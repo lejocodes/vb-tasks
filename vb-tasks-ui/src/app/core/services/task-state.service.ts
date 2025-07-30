@@ -1,7 +1,7 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { TaskService } from './task.service';
-import { Task, TaskStatus, Priority } from '../models';
+import { Task, TaskStatus, Priority, CreateTaskRequest, UpdateTaskRequest } from '../models';
 
 @Injectable({
   providedIn: 'root'
@@ -36,7 +36,7 @@ export class TaskStateService {
     return tasks.filter(task => {
       if (filter.status && task.status !== filter.status) return false;
       if (filter.priority && task.priority !== filter.priority) return false;
-      if (filter.assigneeId && task.assignedTo?.id !== filter.assigneeId) return false;
+      if (filter.assigneeId && !task.assignments.some(a => a.assigneeId === filter.assigneeId)) return false;
       if (filter.searchTerm) {
         const searchLower = filter.searchTerm.toLowerCase();
         const matchesTitle = task.title.toLowerCase().includes(searchLower);
@@ -68,8 +68,8 @@ export class TaskStateService {
     this._error.set(null);
     
     try {
-      const tasks = await firstValueFrom(this.taskService.getAllTasks());
-      this._tasks.set(tasks);
+      const result = await firstValueFrom(this.taskService.getTasks());
+      this._tasks.set(result.items);
     } catch (error) {
       this._error.set('Failed to load tasks');
       console.error('Error loading tasks:', error);
@@ -108,7 +108,7 @@ export class TaskStateService {
     }
   }
 
-  async createTask(task: Partial<Task>): Promise<Task | null> {
+  async createTask(task: CreateTaskRequest): Promise<Task | null> {
     this._loading.set(true);
     this._error.set(null);
     
@@ -125,7 +125,7 @@ export class TaskStateService {
     }
   }
 
-  async updateTask(id: string, updates: Partial<Task>): Promise<Task | null> {
+  async updateTask(id: string, updates: UpdateTaskRequest): Promise<Task | null> {
     this._loading.set(true);
     this._error.set(null);
     

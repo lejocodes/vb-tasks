@@ -27,7 +27,7 @@ export class GroupStateService {
 
   totalMembers = computed(() => {
     const groups = this._groups();
-    return groups.reduce((total, group) => total + group.members.length, 0);
+    return groups.reduce((total, group) => total + group.memberIds.length, 0);
   });
 
   // Methods
@@ -67,11 +67,11 @@ export class GroupStateService {
 
   isUserInGroup(userId: string, groupId: string): boolean {
     const group = this.getGroupById(groupId);
-    return group ? group.members.includes(userId) : false;
+    return group ? group.memberIds.includes(userId) : false;
   }
 
   getUserGroups(userId: string): Group[] {
-    return this._groups().filter(group => group.members.includes(userId));
+    return this._groups().filter(group => group.memberIds.includes(userId));
   }
 
   // Utility methods

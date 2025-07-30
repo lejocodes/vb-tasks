@@ -1,12 +1,13 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
 import { CardModule } from 'primeng/card';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { TooltipModule } from 'primeng/tooltip';
-import { TaskService } from '../../../core/services';
+import { TaskService, TaskStateService } from '../../../core/services';
 import { Task, PagedResult, TaskFilter } from '../../../core/models';
 import { 
   LoadingSpinnerComponent, 
@@ -209,6 +210,7 @@ import { TaskFilterComponent } from '../task-filter/task-filter.component';
 })
 export class TaskListComponent implements OnInit {
   protected taskState = inject(TaskStateService);
+  private taskService = inject(TaskService);
   private router = inject(Router);
 
   tasks$!: Observable<PagedResult<Task>>;
@@ -253,6 +255,12 @@ export class TaskListComponent implements OnInit {
   onPageChange(event: any): void {
     this.currentFilter.pageNumber = event.page + 1; // PrimeNG uses 0-based index
     this.currentFilter.pageSize = event.rows;
+    this.loadTasks();
+  }
+
+  onSearch(searchTerm: string): void {
+    this.currentFilter.searchTerm = searchTerm;
+    this.currentFilter.pageNumber = 1; // Reset to first page
     this.loadTasks();
   }
 }

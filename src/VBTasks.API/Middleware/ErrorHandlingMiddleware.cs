@@ -22,7 +22,19 @@ public class ErrorHandlingMiddleware
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "An unhandled exception occurred");
+            _logger.LogError(ex, "An unhandled exception occurred while processing {Method} {Path}", 
+                context.Request.Method, context.Request.Path);
+            
+            // Log additional details for debugging
+            _logger.LogError("Exception Type: {ExceptionType}", ex.GetType().FullName);
+            _logger.LogError("Stack Trace: {StackTrace}", ex.StackTrace);
+            
+            if (ex.InnerException != null)
+            {
+                _logger.LogError("Inner Exception: {InnerException}", ex.InnerException.Message);
+                _logger.LogError("Inner Exception Stack Trace: {InnerStackTrace}", ex.InnerException.StackTrace);
+            }
+            
             await HandleExceptionAsync(context, ex);
         }
     }

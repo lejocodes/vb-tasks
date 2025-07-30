@@ -6,7 +6,12 @@
       "Bash(find:*)",
       "Bash(npm install:*)",
       "Bash(touch:*)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(npm run:*)",
+      "Bash(ss:*)",
+      "Bash(dotnet build)",
+      "Bash(dotnet clean:*)",
+      "Bash(dotnet run:*)"
     ],
     "deny": []
   }

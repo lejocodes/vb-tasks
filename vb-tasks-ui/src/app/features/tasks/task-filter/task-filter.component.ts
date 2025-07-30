@@ -1,9 +1,9 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { DropdownModule } from 'primeng/dropdown';
+import { Select } from 'primeng/select';
 import { ButtonModule } from 'primeng/button';
-import { CalendarModule } from 'primeng/calendar';
+import { DatePicker } from 'primeng/datepicker';
 import { TaskStateService, UserStateService } from '../../../core/services';
 import { TaskStatus, Priority } from '../../../core/models';
 
@@ -18,45 +18,51 @@ interface SelectOption {
   imports: [
     CommonModule,
     FormsModule,
-    DropdownModule,
+    Select,
     ButtonModule,
-    CalendarModule
+    DatePicker
   ],
   template: `
     <div class="task-filter">
       <div class="filter-row">
         <div class="filter-item">
           <label>Status</label>
-          <p-dropdown 
+          <p-select 
             [(ngModel)]="selectedStatus" 
             [options]="statusOptions" 
             placeholder="All Statuses"
             [showClear]="true"
+            optionLabel="label"
+            optionValue="value"
             (onChange)="applyFilters()"
-          ></p-dropdown>
+          ></p-select>
         </div>
 
         <div class="filter-item">
           <label>Priority</label>
-          <p-dropdown 
+          <p-select 
             [(ngModel)]="selectedPriority" 
             [options]="priorityOptions" 
             placeholder="All Priorities"
             [showClear]="true"
+            optionLabel="label"
+            optionValue="value"
             (onChange)="applyFilters()"
-          ></p-dropdown>
+          ></p-select>
         </div>
 
         <div class="filter-item">
           <label>Assigned To</label>
-          <p-dropdown 
+          <p-select 
             [(ngModel)]="selectedAssignee" 
             [options]="userOptions" 
             placeholder="All Users"
             [showClear]="true"
             [filter]="true"
+            optionLabel="label"
+            optionValue="value"
             (onChange)="applyFilters()"
-          ></p-dropdown>
+          ></p-select>
         </div>
 
         <div class="filter-item">
@@ -107,7 +113,7 @@ interface SelectOption {
     }
 
     :host ::ng-deep {
-      .p-dropdown {
+      .p-select {
         width: 100%;
       }
     }

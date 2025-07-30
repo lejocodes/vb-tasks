@@ -45,10 +45,10 @@ builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IGroupRepository, GroupRepository>();
 
-// Register application services
-builder.Services.AddScoped<VBTasks.Application.Interfaces.ITaskService, VBTasks.Application.Services.TaskService>();
-builder.Services.AddScoped<VBTasks.Application.Interfaces.IUserService, VBTasks.Application.Services.UserService>();
-builder.Services.AddScoped<VBTasks.Application.Interfaces.IGroupService, VBTasks.Application.Services.GroupService>();
+// Register business services
+builder.Services.AddScoped<VBTasks.Business.Interfaces.ITaskService, VBTasks.Business.Services.TaskService>();
+builder.Services.AddScoped<VBTasks.Business.Interfaces.IUserService, VBTasks.Business.Services.UserService>();
+builder.Services.AddScoped<VBTasks.Business.Interfaces.IGroupService, VBTasks.Business.Services.GroupService>();
 
 var app = builder.Build();
 
