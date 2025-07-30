@@ -1,8 +1,11 @@
 {
   "/api": {
-    "target": "http://localhost:5038",
+    "target": "https://127.0.0.1:44303",
     "secure": false,
     "changeOrigin": true,
-    "logLevel": "debug"
+    "logLevel": "debug",
+    "headers": {
+      "Connection": "keep-alive"
+    }
   }
 }

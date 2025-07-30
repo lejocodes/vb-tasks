@@ -1,17 +1,18 @@
 using System.ComponentModel.DataAnnotations;
+using VBTasks.Domain.Constants;
 
 namespace VBTasks.Business.DTOs;
 
 public class CreateTaskDto
 {
-    [Required(ErrorMessage = "Title is required")]
-    [StringLength(200, MinimumLength = 1, ErrorMessage = "Title must be between 1 and 200 characters")]
+    [Required(ErrorMessage = TaskConstants.ErrorMessages.TitleRequired)]
+    [StringLength(TaskConstants.Defaults.MaxTitleLength, MinimumLength = 1, ErrorMessage = TaskConstants.ErrorMessages.TitleTooLong)]
     public string Title { get; set; } = string.Empty;
     
-    [StringLength(2000, ErrorMessage = "Description cannot exceed 2000 characters")]
+    [StringLength(TaskConstants.Defaults.MaxDescriptionLength, ErrorMessage = TaskConstants.ErrorMessages.DescriptionTooLong)]
     public string Description { get; set; } = string.Empty;
     
-    public string Priority { get; set; } = "Medium";
+    public string Priority { get; set; } = TaskConstants.Defaults.DefaultPriority;
     public DateTime? DueDate { get; set; }
     public List<string> Tags { get; set; } = new();
     public List<AssignmentDto> Assignments { get; set; } = new();
@@ -19,12 +20,12 @@ public class CreateTaskDto
 
 public class UpdateTaskDto : CreateTaskDto
 {
-    public string Status { get; set; } = "New";
+    public string Status { get; set; } = TaskConstants.Defaults.DefaultStatus;
 }
 
 public class AssignmentDto
 {
-    public string AssigneeType { get; set; } = "User";
+    public string AssigneeType { get; set; } = TaskConstants.AssigneeType.User;
     public string AssigneeId { get; set; } = string.Empty;
 }
 
@@ -37,7 +38,7 @@ public class TaskFilterDto
     public DateTime? DueDateFrom { get; set; }
     public DateTime? DueDateTo { get; set; }
     public int PageNumber { get; set; } = 1;
-    public int PageSize { get; set; } = 20;
+    public int PageSize { get; set; } = TaskConstants.Defaults.DefaultPageSize;
 }
 
 public class TaskStatisticsDto

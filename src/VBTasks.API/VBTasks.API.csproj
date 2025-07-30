@@ -5,6 +5,8 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>de35f58c-47e5-45e4-8b17-632619a372d6</UserSecretsId>
+    <SpaRoot>..\..\vb-tasks-ui\</SpaRoot>
+    <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,5 +21,31 @@
     <ProjectReference Include="..\VBTasks.Domain\VBTasks.Domain.csproj" />
     <ProjectReference Include="..\VBTasks.Infrastructure\VBTasks.Infrastructure.csproj" />
   </ItemGroup>
+
+  <!-- Don't publish the SPA source files, but do show them in the project files list -->
+  <ItemGroup>
+    <Content Remove="$(SpaRoot)**" />
+    <None Remove="$(SpaRoot)**" />
+    <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
+  </ItemGroup>
+
+  <Target Name="NpmInstall" BeforeTargets="BuildAngular" Condition="!Exists('$(SpaRoot)node_modules')">
+    <Exec Command="npm install" WorkingDirectory="$(SpaRoot)" />
+  </Target>
+
+  <!-- Angular build disabled for now - run manually with npm run build -->
+  <!-- <Target Name="BuildAngular" BeforeTargets="Build">
+    <Exec Command="npm run build" WorkingDirectory="$(SpaRoot)" />
+  </Target> -->
+
+  <Target Name="PublishAngular" AfterTargets="ComputeFilesToPublish">
+    <ItemGroup>
+      <DistFiles Include="$(SpaRoot)dist\vb-tasks-ui\browser\**" />
+      <ResolvedFileToPublish Include="@(DistFiles->'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
+        <RelativePath>wwwroot\%(DistFiles.RecursiveDir)%(DistFiles.Filename)%(DistFiles.Extension)</RelativePath>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </ResolvedFileToPublish>
+    </ItemGroup>
+  </Target>
 
 </Project>

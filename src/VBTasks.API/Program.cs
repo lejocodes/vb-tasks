@@ -59,7 +59,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "VBTasks API V1");
-        c.RoutePrefix = string.Empty; // Set Swagger UI at the app's root
+        c.RoutePrefix = "swagger"; // Move Swagger to /swagger path
     });
 }
 
@@ -69,7 +69,14 @@ app.UseCors("AllowAngularApp");
 
 app.UseHttpsRedirection();
 
+// Serve static files (Angular build)
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 app.MapControllers();
+
+// Fallback to index.html for SPA routing
+app.MapFallbackToFile("index.html");
 
 app.Run();
 

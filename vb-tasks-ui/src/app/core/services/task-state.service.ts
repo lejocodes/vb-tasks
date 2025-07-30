@@ -68,7 +68,7 @@ export class TaskStateService {
     this._error.set(null);
     
     try {
-      const result = await firstValueFrom(this.taskService.getTasks());
+      const result = await firstValueFrom(this.taskService.getTasks({}));
       this._tasks.set(result.items);
     } catch (error) {
       this._error.set('Failed to load tasks');

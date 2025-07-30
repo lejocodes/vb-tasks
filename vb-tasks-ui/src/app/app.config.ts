@@ -2,6 +2,7 @@ import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZoneChang
 import { provideRouter } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { providePrimeNG } from 'primeng/config';
+import { MessageService } from 'primeng/api';
 import Lara from '@primeng/themes/lara';
 
 import { routes } from './app.routes';
@@ -24,6 +25,7 @@ export const appConfig: ApplicationConfig = {
           cssLayer: false
         }
       }
-    })
+    }),
+    MessageService
   ]
 };

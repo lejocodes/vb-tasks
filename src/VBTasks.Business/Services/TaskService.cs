@@ -1,6 +1,7 @@
 using VBTasks.Business.DTOs;
 using VBTasks.Business.Entities;
 using VBTasks.Business.Interfaces;
+using VBTasks.Domain.Constants;
 
 namespace VBTasks.Business.Services;
 
@@ -142,7 +143,7 @@ public class TaskService : ITaskService
                 .GroupBy(t => t.Priority)
                 .ToDictionary(g => g.Key, g => g.Count()),
             OverdueTasks = tasks
-                .Count(t => t.DueDate.HasValue && t.DueDate.Value < DateTime.UtcNow && t.Status != "Completed")
+                .Count(t => t.DueDate.HasValue && t.DueDate.Value < DateTime.UtcNow && t.Status != TaskConstants.Status.Completed)
         };
     }
 }

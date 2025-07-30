@@ -247,3 +247,12 @@ out/
 ## Ignore JSON data files in the backend (if you want to keep data out of git)
 # Uncomment the following line if you want to ignore the JSON data files
 # src/VBTasks.API/Data/*.json
+
+## wwwroot directory
+wwwroot/
+**/wwwroot/
+
+## Interview materials
+interview-questions.md
+interview-questions-concise.md
+interview-cheatsheet.md

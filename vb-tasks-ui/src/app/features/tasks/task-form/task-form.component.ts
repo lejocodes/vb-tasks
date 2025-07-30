@@ -11,7 +11,7 @@ import { ButtonModule } from 'primeng/button';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { ChipModule } from 'primeng/chip';
-import { TaskStateService, UserStateService, GroupStateService } from '../../../core/services';
+import { TaskStateService, UserStateService, GroupStateService, NotificationService } from '../../../core/services';
 import { TaskStatus, Priority, Task, User, Group, CreateTaskRequest, UpdateTaskRequest, AssigneeType } from '../../../core/models';
 import { LoadingSpinnerComponent } from '../../../shared/components';
 
@@ -181,121 +181,7 @@ interface SelectOption {
       </p-card>
     </div>
   `,
-  styles: [`
-    .task-form {
-      padding: 0 1rem;
-      max-width: 800px;
-      margin: 0 auto;
-    }
-
-    h2 {
-      color: var(--text-color);
-    }
-
-    .field {
-      margin-bottom: 1.5rem;
-    }
-
-    .field label {
-      display: block;
-      margin-bottom: 0.5rem;
-      font-weight: 500;
-      color: var(--text-color);
-    }
-
-    .grid {
-      display: flex;
-      flex-wrap: wrap;
-      margin: -0.5rem;
-    }
-
-    .col-12 {
-      width: 100%;
-      padding: 0.5rem;
-    }
-
-    @media screen and (min-width: 768px) {
-      .md\\:col-6 {
-        width: 50%;
-      }
-    }
-
-    .w-full {
-      width: 100%;
-    }
-
-    .flex {
-      display: flex;
-    }
-
-    .justify-content-between {
-      justify-content: space-between;
-    }
-
-    .justify-content-end {
-      justify-content: flex-end;
-    }
-
-    .align-items-center {
-      align-items: center;
-    }
-
-    .gap-2 {
-      gap: 0.5rem;
-    }
-
-    .px-3 {
-      padding-left: 1rem;
-      padding-right: 1rem;
-    }
-
-    .pt-3 {
-      padding-top: 1rem;
-    }
-
-    .mt-4 {
-      margin-top: 1.5rem;
-    }
-
-    .m-0 {
-      margin: 0;
-    }
-
-    .text-red-500 {
-      color: #ef4444;
-    }
-
-    .tags-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      align-items: center;
-    }
-
-    .tag-input {
-      flex: 1;
-      min-width: 200px;
-    }
-
-    :host ::ng-deep {
-      .p-card {
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        border: 1px solid var(--surface-border);
-      }
-
-      .p-select,
-      .p-datepicker {
-        width: 100%;
-      }
-
-      .p-error {
-        color: #ef4444;
-        font-size: 0.875rem;
-        margin-top: 0.25rem;
-        display: block;
-      }
-    }
-  `]
+  styleUrl: './task-form.component.scss'
 })
 export class TaskFormComponent implements OnInit {
   private fb = inject(FormBuilder);
@@ -304,6 +190,7 @@ export class TaskFormComponent implements OnInit {
   protected taskState = inject(TaskStateService);
   protected userState = inject(UserStateService);
   protected groupState = inject(GroupStateService);
+  private notificationService = inject(NotificationService);
 
   taskForm!: FormGroup;
   isEditMode = false;
@@ -402,6 +289,7 @@ export class TaskFormComponent implements OnInit {
           tags: formValue.tags || []
         };
         await this.taskState.updateTask(this.taskId, updateRequest);
+        this.notificationService.showSuccess('Task updated successfully');
       } else {
         const createRequest: CreateTaskRequest = {
           title: formValue.title,
@@ -415,6 +303,7 @@ export class TaskFormComponent implements OnInit {
           }] : []
         };
         await this.taskState.createTask(createRequest);
+        this.notificationService.showSuccess('Task created successfully');
       }
       
       this.router.navigate(['/tasks']);

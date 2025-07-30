@@ -11,7 +11,13 @@
       "Bash(ss:*)",
       "Bash(dotnet build)",
       "Bash(dotnet clean:*)",
-      "Bash(dotnet run:*)"
+      "Bash(dotnet run:*)",
+      "Bash(ls:*)",
+      "Bash(cat:*)",
+      "Bash(pkill:*)",
+      "Bash(true)",
+      "Bash(mkdir:*)",
+      "Bash(cp:*)"
     ],
     "deny": []
   }

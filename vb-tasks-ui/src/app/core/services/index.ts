@@ -4,3 +4,4 @@ export * from './group.service';
 export * from './task-state.service';
 export * from './user-state.service';
 export * from './group-state.service';
+export * from './notification.service';

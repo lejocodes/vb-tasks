@@ -7,7 +7,9 @@ import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { TooltipModule } from 'primeng/tooltip';
-import { TaskService, TaskStateService } from '../../../core/services';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ConfirmationService } from 'primeng/api';
+import { TaskService, TaskStateService, NotificationService } from '../../../core/services';
 import { Task, PagedResult, TaskFilter } from '../../../core/models';
 import { 
   LoadingSpinnerComponent, 
@@ -27,12 +29,14 @@ import { TaskFilterComponent } from '../task-filter/task-filter.component';
     ButtonModule,
     InputTextModule,
     TooltipModule,
+    ConfirmDialogModule,
     LoadingSpinnerComponent,
     StatusBadgeComponent,
     PriorityBadgeComponent,
     EmptyStateComponent,
     TaskFilterComponent
   ],
+  providers: [ConfirmationService],
   template: `
     <div class="task-list">
       <p-card>
@@ -142,76 +146,16 @@ import { TaskFilterComponent } from '../task-filter/task-filter.component';
         </ng-container>
       </p-card>
     </div>
+    <p-confirmDialog></p-confirmDialog>
   `,
-  styles: [`
-    .task-list {
-      padding: 0 1rem;
-    }
-
-    h2 {
-      color: var(--text-color);
-    }
-
-    .flex {
-      display: flex;
-    }
-
-    .justify-content-between {
-      justify-content: space-between;
-    }
-
-    .align-items-center {
-      align-items: center;
-    }
-
-    .px-3 {
-      padding-left: 1rem;
-      padding-right: 1rem;
-    }
-
-    .pt-3 {
-      padding-top: 1rem;
-    }
-
-    .ml-2 {
-      margin-left: 0.5rem;
-    }
-
-    .ml-auto {
-      margin-left: auto;
-    }
-
-    .m-0 {
-      margin: 0;
-    }
-
-    :host ::ng-deep {
-      .p-card {
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        border: 1px solid var(--surface-border);
-      }
-
-      .p-datatable-sm .p-datatable-tbody > tr > td {
-        padding: 0.5rem;
-      }
-
-      .p-input-icon-left > input {
-        padding-left: 2.5rem;
-      }
-
-      .p-input-icon-left > .pi {
-        position: absolute;
-        left: 0.75rem;
-        top: 50%;
-        transform: translateY(-50%);
-      }
-    }
-  `]
+  styleUrl: './task-list.component.scss'
 })
 export class TaskListComponent implements OnInit {
   protected taskState = inject(TaskStateService);
   private taskService = inject(TaskService);
   private router = inject(Router);
+  private confirmationService = inject(ConfirmationService);
+  private notificationService = inject(NotificationService);
 
   tasks$!: Observable<PagedResult<Task>>;
   loading = true;
@@ -244,12 +188,25 @@ export class TaskListComponent implements OnInit {
     this.router.navigate(['/tasks', task.id, 'edit']);
   }
 
-  async deleteTask(task: Task): Promise<void> {
-    if (confirm(`Are you sure you want to delete "${task.title}"?`)) {
-      this.taskService.deleteTask(task.id).subscribe(() => {
-        this.loadTasks();
-      });
-    }
+  deleteTask(task: Task): void {
+    this.confirmationService.confirm({
+      message: `Are you sure you want to delete "${task.title}"?`,
+      header: 'Confirm Delete',
+      icon: 'pi pi-exclamation-triangle',
+      acceptButtonStyleClass: 'p-button-danger',
+      accept: () => {
+        this.taskService.deleteTask(task.id).subscribe({
+          next: () => {
+            this.notificationService.showSuccess(`Task "${task.title}" has been deleted successfully`);
+            this.loadTasks();
+          },
+          error: (error) => {
+            console.error('Error deleting task:', error);
+            // Error is already handled by the interceptor
+          }
+        });
+      }
+    });
   }
 
   onPageChange(event: any): void {
